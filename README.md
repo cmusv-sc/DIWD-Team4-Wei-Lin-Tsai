@@ -19,7 +19,8 @@ requirement:
 
 - Activate env
 
-  source env/bin/activate
+  source env/bin/activate (if you are using bash)
+  csh env/bin/activate.csh (if you are using csh)
 
 - Install the requirements
 
@@ -28,7 +29,7 @@ requirement:
 # Load DBLP into Neo4j
 
 requirement:
-  maven
+  maven and Java 1.8
 
 - Clean and Compile
 
