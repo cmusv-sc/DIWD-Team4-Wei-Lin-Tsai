@@ -20,6 +20,7 @@ requirement:
 - Activate env
 
   source env/bin/activate (if you are using bash)
+
   csh env/bin/activate.csh (if you are using csh)
 
 - Install the requirements
