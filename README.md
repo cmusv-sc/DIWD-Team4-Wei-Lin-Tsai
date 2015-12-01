@@ -30,7 +30,7 @@ requirement:
 # Load DBLP into Neo4j
 
 requirement:
-  maven and Java 1.8
+  maven and Java 1.8 (if you use 1.7, some code needs to be updated)
 
 - Clean and Compile
 
