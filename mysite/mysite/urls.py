@@ -3,6 +3,7 @@ from django.contrib import admin
 
 # import view functions from trips app
 from data_2015_fall.views import landing
+from data_2015_fall.views import sign
 
 
 # Uncomment the next two lines to enable the admin:
@@ -19,5 +20,6 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
     url(r'^$', landing),
+    url(r'^sign/', sign),
     url(r'^dblp/', include('data_2015_fall.urls'))
 )

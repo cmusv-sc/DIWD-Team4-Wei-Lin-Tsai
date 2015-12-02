@@ -53,16 +53,17 @@ def searchByAuthor(request):
         pushLog('error', log_para, sys.exc_info()[0])
         pass
 
-    return result
-
-    
+    return result 
 
 def landing(request):
 
     out = ""
     target = 'index.html'
 
-    out = searchByAuthor(request)
+    try:
+        out = searchByAuthor(request)
+    except:
+        pass
 
     if "Can't find Author" in out or not out:
       target = 'base.html'
@@ -72,6 +73,9 @@ def landing(request):
     {'out':SafeString(out),
     })
 
+def sign(request):
+    return render(request,
+    'sign_in_up.html')
     
 
 class CoAuthorNode(object):
