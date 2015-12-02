@@ -3,41 +3,75 @@ from datetime import datetime
 from django.shortcuts import render
 import simplejson
 import urllib2
+import logging
+import sys
 from django.utils.safestring import SafeString
 from django.http import JsonResponse
 from data_2015_fall.models import *
 from neomodel import DoesNotExist
 
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+def pushLog(type,log_para, event):
+    FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
+    logging.basicConfig(format=FORMAT)
+    logger = logging.getLogger('tcpserver')
+    if type == 'warning':
+        logger.warning('Calling: %s', event, extra=log_para)
+    elif type == 'error':
+        logger.error('Error: %s', event, extra=log_para)
+    elif type == 'info':
+        logger.info('Info: %s', event, extra=log_para)
+
+def searchByAuthor(request):
+    query = request.GET['input'].replace(" ", "%20")
+    param = request.GET['search_param']
+    try:
+        if query and param :
+            if param == "2":
+                url = 'http://127.0.0.1:8000/dblp/coauthors/' + param +'/'+ query
+            else:
+                url = 'http://127.0.0.1:8000/dblp/coauthors/' + query
+
+            req = urllib2.Request(url)
+            f = urllib2.urlopen(req)
+            result = f.read()
+            result = result[result.find("{",1):-2].replace("\\", "")
+
+            log_para = {'clientip': get_client_ip(request), 'user': 'tempUSER'}
+            pushLog('warning', log_para, url)
+
+    except:
+        pushLog('error', log_para, sys.exc_info()[0])
+        pass
+
+    return result
+
+    
+
 def landing(request):
-    a = ""
-    h = ""
+
     out = ""
     target = 'index.html'
-    query = "Search term..."
-    try:
-      a = request.GET['input'].replace(" ", "%20")
-      h = request.GET['search_param']
-      if a and h :
-        if h == "2":
-          url = 'http://127.0.0.1:8000/dblp/coauthors/' + h +'/'+a
-        else:
-          url = 'http://127.0.0.1:8000/dblp/coauthors/' + a
-        req = urllib2.Request(url)
-        f = urllib2.urlopen(req)
-        out = f.read()
-        out = out[out.find("{",1):-2].replace("\\", "")
-        query = request.GET['input']
-    except:
-      pass
+
+    out = searchByAuthor(request)
 
     if "Can't find Author" in out or not out:
-     target = 'base.html'
+      target = 'base.html'
 
     return render(request,
     target,
     {'out':SafeString(out),
-    'query': query,
     })
+
+    
 
 def demo_wei(request):
     print "here"
