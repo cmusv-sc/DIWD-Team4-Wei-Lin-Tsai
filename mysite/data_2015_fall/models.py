@@ -7,7 +7,7 @@ class Article(StructuredNode):
     title = StringProperty()
     journal = StringProperty()
     year = IntegerProperty()
-    volume = IntegerProperty()
+    volume = StringProperty()
     authors = RelationshipFrom('Author', 'AUTHORED')
 
 

@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from data_2015_fall.models import *
 
 def demo_wl(request):
     print "wl"
@@ -6,4 +7,13 @@ def demo_wl(request):
 
 def getTopKRelevantPapersWithAuthorsByKeywords(request, keywords, k):
     print "call getTopKRelevantPapersWithAuthorsByKeywords()"
+    cnt = 0
+    for tmp in Article.nodes:
+    	print tmp.title
+    	#print tmp.name
+    	cnt += 1
+    	if (cnt > 10):
+    		break
+    print cnt	
+
     return JsonResponse({keywords: 'k'})
