@@ -7,5 +7,5 @@ urlpatterns = [
     url(r'^demo/$', demo_wei),
     url(r'^coauthors/(?P<level>\d+)/(?P<name>.+)$', findCoAuthorsMultiLevel),
     url(r'^coauthors/(?P<name>.+)$', findCoAuthors),
-    url(r'^test/$', getTopKRelevantPapersWithAuthorsByKeywords)
+    url(r'^papers/(?P<keywords>.+)/(?P<k>\d+)$', getTopKRelevantPapersWithAuthorsByKeywords)
 ]

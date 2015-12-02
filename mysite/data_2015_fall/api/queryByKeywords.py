@@ -4,6 +4,6 @@ def demo_wl(request):
     print "wl"
     return JsonResponse({'weilin': 'tsai'})
 
-def getTopKRelevantPapersWithAuthorsByKeywords(request):
+def getTopKRelevantPapersWithAuthorsByKeywords(request, keywords, k):
     print "call getTopKRelevantPapersWithAuthorsByKeywords()"
-    return JsonResponse({'getTopKRelevantPapersWithAuthorsByKeywords': 'tsai'})
+    return JsonResponse({keywords: 'k'})
