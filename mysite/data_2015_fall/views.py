@@ -7,6 +7,7 @@ from django.utils.safestring import SafeString
 from django.http import JsonResponse
 from data_2015_fall.models import *
 from neomodel import DoesNotExist
+from api.queryByKeywords import *
 
 def landing(request):
     a = ""
@@ -42,6 +43,7 @@ def landing(request):
 def demo_wei(request):
     print "here"
     return JsonResponse({'foo': 'bar'})
+
 
 class CoAuthorNode(object):
     name = ""
