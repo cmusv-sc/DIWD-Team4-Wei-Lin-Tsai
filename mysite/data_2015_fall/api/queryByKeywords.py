@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from data_2015_fall.models import *
+import Queue
 
 # ===================================================
 #	Classes 
@@ -22,8 +23,8 @@ class Paper(object):
     def __hash__(self):
         return hash(self.title)
 
-    def __cmp__(self, other): # TODO, not sure for now 
-        return cmp(self.name, other.name)
+    def __cmp__(self, other): # for priority queue
+        return self.relevance > other.relevance
 
     def toDict(self):
         return {
@@ -43,18 +44,23 @@ def getTopKRelevantPapersWithAuthorsByKeywords(request, keywords, k):
     for word in keywordsList:
         print word
     cnt = 0
-    
+    pQ = Queue.PriorityQueue()
     for article in Article.nodes:
         lowerTitle = article.title.lower()
         matchCnt = 0
         for keyword in keywordsList:
             if keyword in lowerTitle:
     	       matchCnt += 1
-    	if (matchCnt > 1):
-            print article.title
+    	if (matchCnt > 0):
+            pQ.put(Paper(article.title, [], matchCnt))
             cnt += 1
-    	if (cnt > 20):
-    		break
-    print cnt	
-    
+        if (pQ.qsize() > int(k) + 5): # remove some item if Queue is too large, 5 for margin because qsize is not precise 
+            pQ.get()    
+    	#if (cnt > 100):
+    	#	break
+
+    while not pQ.empty():
+        article = pQ.get()
+        print article.title + "  >>>>>  " + str(article.relevance)   
+
     return JsonResponse({keywords: k})
