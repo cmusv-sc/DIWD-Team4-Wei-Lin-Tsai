@@ -31,6 +31,7 @@ def pushLog(type,log_para, event):
         logger.info('Info: %s', event, extra=log_para)
 
 def searchByAuthor(request):
+    print request.GET
     query = request.GET['input'].replace(" ", "%20")
     param = request.GET['search_param']
     try:
@@ -72,10 +73,6 @@ def landing(request):
     })
 
     
-
-def demo_wei(request):
-    print "here"
-    return JsonResponse({'foo': 'bar'})
 
 class CoAuthorNode(object):
     name = ""
