@@ -4,6 +4,8 @@ from django.contrib import admin
 # import view functions from trips app
 from data_2015_fall.views import landing
 from data_2015_fall.views import sign
+from data_2015_fall.views import sign_in
+
 
 
 # Uncomment the next two lines to enable the admin:
@@ -21,5 +23,6 @@ urlpatterns = patterns('',
     # url(r'^admin/', include(admin.site.urls)),
     url(r'^$', landing),
     url(r'^sign/', sign),
+    url(r'^login/', sign_in),
     url(r'^dblp/', include('data_2015_fall.urls'))
 )
