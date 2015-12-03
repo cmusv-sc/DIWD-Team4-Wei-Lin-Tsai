@@ -5,6 +5,7 @@ import simplejson
 import urllib2
 import logging
 import sys
+from django.http import HttpResponse
 from django.utils.safestring import SafeString
 from django.http import JsonResponse
 from data_2015_fall.models import *
@@ -55,6 +56,7 @@ def searchByAuthor(request):
 
     return result 
 
+
 def searchRelatedPapers(input):
     return {
     }
@@ -86,10 +88,26 @@ def landing(request):
     """
     return render(request, 'index.html')
 
+def sign_in(request):
+    target = 'sign_in_up.html'
+
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        passwd = request.POST.get('passwd')
+        json_data = open('member.json','r')
+        memberlist = simplejson.load(json_data)
+        if email in memberlist and passwd == memberlist[email]:
+            response = HttpResponse('Set your lucky_number as 8')
+            response.set_cookie('lucky_number',8)
+            # target = 'base.html'
+
+    return response
+
 def sign(request):
+
     return render(request,
     'sign_in_up.html')
-    
+
 
 
 class CoAuthorNode(object):
