@@ -1,4 +1,13 @@
 
+*::selection {
+    background: #B4D5FF;
+}
+
+*::-moz-selection {
+    background: #B4D5FF;
+}
+
+
 #result {
     padding-top:100px;
     padding-bottom:300px;
