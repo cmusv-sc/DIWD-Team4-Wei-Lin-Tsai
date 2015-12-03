@@ -5,13 +5,12 @@ import simplejson
 import urllib2
 import logging
 import sys
-from django.http import HttpResponse
 from django.utils.safestring import SafeString
 from django.http import JsonResponse
 from data_2015_fall.models import *
 from neomodel import DoesNotExist
 from api.queryByKeywords import *
-
+from api.queryByJournal import *
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -86,29 +85,52 @@ def landing(request):
         {'out':SafeString(out),
         })
     """
+    if not request.COOKIES.get('member'):
+        return render(request, 'sign_in_up.html')
     return render(request, 'index.html')
 
-def sign_in(request):
-    target = 'sign_in_up.html'
-
+def sign_up(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         passwd = request.POST.get('passwd')
-        json_data = open('member.json','r')
-        memberlist = simplejson.load(json_data)
-        if email in memberlist and passwd == memberlist[email]:
-            response = HttpResponse('Set your lucky_number as 8')
-            response.set_cookie('lucky_number',8)
-            # target = 'base.html'
+        temp_dict = {email:passwd}
+        in_file = open('member.json')
+        memberlist = simplejson.load(in_file)
+        memberlist.update(temp_dict)
+        in_file.close()
+
+        out_file = open('member.json','w')
+        simplejson.dump(memberlist,out_file, indent=4)
+        out_file.close()
+
+        response =  render(request, 'index.html',{'member':email})
+        response.set_cookie("member",email)
 
     return response
 
-def sign(request):
+def sign_out(request):
+    response =  render(request, 'sign_in_up.html')
+    response.delete_cookie('member')
+    return response
 
+def sign_in(request):
+    response =  render(request, 'sign_in_up.html')
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        passwd = request.POST.get('passwd')
+        in_file = open('member.json','r')
+        memberlist = simplejson.load(in_file)
+        if email in memberlist and passwd == memberlist[email]:
+            response =  render(request, 'index.html',{'member':email})
+            response.set_cookie("member",email)
+        in_file.close()
+    return response
+
+def sign(request):
+    if request.COOKIES.get('member'):
+        return render(request,'index.html')
     return render(request,
     'sign_in_up.html')
-
-
 
 class CoAuthorNode(object):
     name = ""

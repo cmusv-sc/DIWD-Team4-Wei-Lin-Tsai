@@ -5,6 +5,8 @@ from django.contrib import admin
 from data_2015_fall.views import landing
 from data_2015_fall.views import sign
 from data_2015_fall.views import sign_in
+from data_2015_fall.views import sign_out
+from data_2015_fall.views import sign_up
 
 
 
@@ -24,5 +26,7 @@ urlpatterns = patterns('',
     url(r'^$', landing),
     url(r'^sign/', sign),
     url(r'^login/', sign_in),
+    url(r'^logout/', sign_out),
+    url(r'^register/', sign_up),
     url(r'^dblp/', include('data_2015_fall.urls'))
 )
