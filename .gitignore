@@ -1,6 +1,9 @@
 # dblp.xml
 dblp-loader/dblp.xml
 
+# member.json
+mysite/member.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
