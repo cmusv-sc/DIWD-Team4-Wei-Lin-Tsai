@@ -68,7 +68,7 @@ $(document).ready(function () {
         update();
     };
 
-    function showRelatedPapers(papers) {
+    function showTopKPapers(papers) {
         var width = 960,
             height = 500;
 
@@ -159,7 +159,11 @@ $(document).ready(function () {
             });
 
         });
-    }
+    };
+
+    function showRelatedPapers(papers) {
+        
+    };
 
     $("#search-btn").click(function () {
         $("#result-showcase").empty();
@@ -181,13 +185,23 @@ $(document).ready(function () {
 
             });
         } else if (type == 'papers') {
+            // top k related papers
             $.ajax({
                 url:'/dblp/papers/' + content + '/100'
             }).done(function (ret) {
                 console.log(ret);
-                showRelatedPapers(ret.papers);
+                showTopKPapers(ret.papers);
             }).fail(function () {
             })
+        } else if (type == 'papers-rel') {
+            // papers interested in
+            $.ajax({
+                url:'/dblp/papers/' + content + '/10'
+            }).done(function (ret) {
+                showRelatedPapers(ret.papers);
+            }).fail(function () {
+                
+            });
         }
     });
     var papers = [
@@ -201,7 +215,7 @@ $(document).ready(function () {
         }
     ];
 
-    // showRelatedPapers(papers);
+    // showTopKPapers(papers);
     // var treeData = [
     // {"name": "Udo Pletat", "children": [{"name": "Toni Bollinger", "children": [{"name": "Sven Lorenz", "children": []}]}, {"name": "Sven Lorenz", "children": [{"name": "Toni Bollinger", "children": []}]}]}
     // ];
