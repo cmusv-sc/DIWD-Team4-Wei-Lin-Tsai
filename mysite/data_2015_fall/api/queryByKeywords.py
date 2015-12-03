@@ -36,10 +36,6 @@ class Paper(object):
 # ===================================================
 #	Functions 
 # ===================================================
-def demo_wl(request):
-    print "wl"
-    return JsonResponse({'weilin': 'tsai'})
-
 def getTopKRelevantPapersWithAuthorsByKeywords(request, keywords, k):
     print "call getTopKRelevantPapersWithAuthorsByKeywords()"
     keywordsList = keywords.lower().split("+")
