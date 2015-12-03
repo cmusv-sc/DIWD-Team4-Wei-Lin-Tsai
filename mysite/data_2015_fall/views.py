@@ -10,6 +10,7 @@ from django.http import JsonResponse
 from data_2015_fall.models import *
 from neomodel import DoesNotExist
 from api.queryByKeywords import *
+
 from api.queryByJournal import *
 
 def get_client_ip(request):
@@ -131,6 +132,7 @@ def sign(request):
         return render(request,'index.html')
     return render(request,
     'sign_in_up.html')
+
 
 class CoAuthorNode(object):
     name = ""

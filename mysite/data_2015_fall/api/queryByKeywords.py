@@ -16,10 +16,16 @@ class Paper(object):
     title = ""
     authors = []
     relevance = 0
-    def __init__(self, title, authors, relevance):
+    journal = ""
+    year = 1990
+    volume = 1
+    def __init__(self, title, authors, relevance, journal, year, volume):
         self.title = title
         self.authors = authors
         self.relevance = relevance
+        self.journal = journal
+        self.year = year
+        self.volume = volume
 
     def __hash__(self):
         return hash(self.title)
@@ -30,7 +36,10 @@ class Paper(object):
     def toDict(self):
         return {
             "title": self.title,
-            "authors": [a.toDict() for a in self.authors]
+            "authors": [a.toDict() for a in self.authors],
+            "journal": self.journal,
+            "year": self.year,
+            "volume": self.volume
         }
 
 # ===================================================
@@ -49,7 +58,7 @@ def getTopKRelevantPapersWithAuthorsByKeywords(request, keywords, k):
             if keyword in lowerTitle:
     	       matchCnt += 1
     	if (matchCnt > 0):
-            pQ.put(Paper(article.title, article.authors, matchCnt))
+            pQ.put(Paper(article.title, article.authors, matchCnt, article.journal, article.year, article.volume))
         if (pQ.qsize() > int(k) + 5): # remove some item if Queue is too large, 5 for margin because qsize is not precise 
             pQ.get()    
 
