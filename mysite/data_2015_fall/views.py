@@ -31,7 +31,6 @@ def pushLog(type,log_para, event):
         logger.info('Info: %s', event, extra=log_para)
 
 def searchByAuthor(request):
-    print request.GET
     query = request.GET['input'].replace(" ", "%20")
     param = request.GET['search_param']
     try:
@@ -55,23 +54,36 @@ def searchByAuthor(request):
 
     return result 
 
+def searchRelatedPapers(input):
+    return {
+    }
+
 def landing(request):
+    """
+        out = ""
+        target = 'index.html'
 
-    out = ""
-    target = 'index.html'
+        if 'search_param' in request.GET:
+            type = request.GET['search_param']
+            # TODO: this part should be refactored. Either using ajax to call through
+            # rest api, or directly call the function 'findCoAuthor_'.
+            if type == 'coauthor':
+                out = searchByAuthor(request)
+            elif type == 'coauthor L2':
+                out = searchByAuthor(request)
+            elif type == 'papers':
+                out = searchRelatedPapers(request.GET['input'])
+            else:
+                target = 'base.html'
+        else:
+            target = 'base.html'
 
-    try:
-        out = searchByAuthor(request)
-    except:
-        pass
-
-    if "Can't find Author" in out or not out:
-      target = 'base.html'
-
-    return render(request,
-    target,
-    {'out':SafeString(out),
-    })
+        return render(request,
+        target,
+        {'out':SafeString(out),
+        })
+    """
+    return render(request, 'index.html')
 
 def sign(request):
     return render(request,
