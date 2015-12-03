@@ -10,6 +10,7 @@ from django.utils.safestring import SafeString
 from django.http import JsonResponse
 from data_2015_fall.models import *
 from neomodel import DoesNotExist
+from api.queryByKeywords import *
 
 
 def get_client_ip(request):
@@ -55,23 +56,37 @@ def searchByAuthor(request):
 
     return result 
 
+
+def searchRelatedPapers(input):
+    return {
+    }
+
 def landing(request):
+    """
+        out = ""
+        target = 'index.html'
 
-    out = ""
-    target = 'index.html'
+        if 'search_param' in request.GET:
+            type = request.GET['search_param']
+            # TODO: this part should be refactored. Either using ajax to call through
+            # rest api, or directly call the function 'findCoAuthor_'.
+            if type == 'coauthor':
+                out = searchByAuthor(request)
+            elif type == 'coauthor L2':
+                out = searchByAuthor(request)
+            elif type == 'papers':
+                out = searchRelatedPapers(request.GET['input'])
+            else:
+                target = 'base.html'
+        else:
+            target = 'base.html'
 
-    try:
-        out = searchByAuthor(request)
-    except:
-        pass
-
-    if "Can't find Author" in out or not out:
-        target = 'base.html'
-
-    return render(request,
-    target,
-    {'out':SafeString(out),
-    })
+        return render(request,
+        target,
+        {'out':SafeString(out),
+        })
+    """
+    return render(request, 'index.html')
 
 def sign_in(request):
     target = 'sign_in_up.html'
@@ -94,9 +109,6 @@ def sign(request):
     'sign_in_up.html')
 
 
-def demo_wei(request):
-    print "here"
-    return JsonResponse({'foo': 'bar'})
 
 class CoAuthorNode(object):
     name = ""
@@ -127,7 +139,10 @@ def findCoAuthors(request, name):
         root = findCoAuthorsMultiLevel_(1, name)
     except DoesNotExist as e:
         return JsonResponse({'error': "Can't find Author: " + name})
-    return JsonResponse({'coauthors': simplejson.dumps(root.toDict())})
+    # return JsonResponse({'coauthors': simplejson.dumps(root.toDict())})
+    return JsonResponse({
+        'coauthors':root.toDict()
+    })
 
 def findCoAuthors_(name, visited):
     author = Author.nodes.get(name=name)
@@ -166,4 +181,4 @@ def findCoAuthorsMultiLevel(request, level, name):
         root = findCoAuthorsMultiLevel_(level, name)
     except DoesNotExist as e:
         return JsonResponse({'error': "Can't find Author: " + name})
-    return JsonResponse({'coauthors': simplejson.dumps(root.toDict())})
+    return JsonResponse({'coauthors': root.toDict()})
