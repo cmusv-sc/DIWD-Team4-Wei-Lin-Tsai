@@ -21,6 +21,8 @@
     <link href="{{STATIC_URL}}font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    {% block css %}
+    {% endblock %}
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -55,6 +57,8 @@
                     <li>
                         <a class="page-scroll" href="#result">Result</a>
                     </li>
+                    {% block login %}
+                    {% endblock %}
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
@@ -65,36 +69,41 @@
     <!-- Intro Header -->
     <header class="intro">
         <div class="intro-body">
+
+            {% block sign_form %}
+            
             <div class="container">
                 <div class="row">
                     <div class="col-md-8 col-md-offset-2">
                         <p class="intro-text">DBLP search tool </p>
 
-                        <form action="" method="get" role="form" class="form-horizontal">
+                        <div class="form-horizontal">
                             <div class="input-group">
                             <div class="input-group-btn search-panel">
                                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                                    <span id="search_concept">level</span> <span class="caret"></span>
+                                    <span id="search_concept">select</span> <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu" role="menu">
-                                  <li><a href="#1">1</a></li>
-                                  <li><a href="#2">2</a></li>
+                                  <li><a href="#coauthor">Search CoAuthor</a></li>
+                                  <li><a href="#coauthor2">Search CoAuthor of CoAuthor</a></li>
+                                  <li><a href="#papers">Search Papers Top 100</a></li>
+                                  <li><a href="#papers-interested-in">Search Papers Interested In</a></li>
                                 </ul>
                             </div>
                             <input type="hidden" name="search_param" value="1" id="search_param">
-                            <input type="text" class="form-control" name="input" placeholder="Search term...">
+                            <input id="search-content" type="text" class="form-control" name="input" placeholder="Search term...">
 
                             <span class="input-group-btn">
-                                <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+                                <button id="search-btn" class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
                             </span>
                             </div>
-                        </form>
-                        <!-- DEBUG 
-                            <p style= "color: white;"> {{query}} {% block json %} {% endblock %}</p>
-                        -->
+                        </div>
                     </div>
                 </div>
             </div>
+            
+            {% endblock %}
+        
         </div>
     </header>
 
@@ -128,12 +137,15 @@
     <!-- Custom Theme JavaScript -->
     <script src="{{STATIC_URL}}js/grayscale.js"></script>
 
+
     <!-- Update search bar -->
     <script type="text/javascript">
     $(document).ready(function () {
         $(".form-control").val("{{query}}");
     });
     </script>
+    {% block js %}
+    {% endblock %}
 </body>
 
 </html>

@@ -70,3 +70,5 @@ env
 .classpath
 
 dblp.xml
+.idea
+*.db

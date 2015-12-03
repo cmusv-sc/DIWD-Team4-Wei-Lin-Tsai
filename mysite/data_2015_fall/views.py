@@ -3,46 +3,135 @@ from datetime import datetime
 from django.shortcuts import render
 import simplejson
 import urllib2
+import logging
+import sys
 from django.utils.safestring import SafeString
 from django.http import JsonResponse
 from data_2015_fall.models import *
 from neomodel import DoesNotExist
 from api.queryByKeywords import *
 
-def landing(request):
-    a = ""
-    h = ""
-    out = ""
-    target = 'index.html'
-    query = "Search term..."
+from api.queryByJournal import *
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+def pushLog(type,log_para, event):
+    FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
+    logging.basicConfig(format=FORMAT)
+    logger = logging.getLogger('tcpserver')
+    if type == 'warning':
+        logger.warning('Calling: %s', event, extra=log_para)
+    elif type == 'error':
+        logger.error('Error: %s', event, extra=log_para)
+    elif type == 'info':
+        logger.info('Info: %s', event, extra=log_para)
+
+def searchByAuthor(request):
+    query = request.GET['input'].replace(" ", "%20")
+    param = request.GET['search_param']
     try:
-      a = request.GET['input'].replace(" ", "%20")
-      h = request.GET['search_param']
-      if a and h :
-        if h == "2":
-          url = 'http://127.0.0.1:8000/dblp/coauthors/' + h +'/'+a
-        else:
-          url = 'http://127.0.0.1:8000/dblp/coauthors/' + a
-        req = urllib2.Request(url)
-        f = urllib2.urlopen(req)
-        out = f.read()
-        out = out[out.find("{",1):-2].replace("\\", "")
-        query = request.GET['input']
+        if query and param :
+            if param == "2":
+                url = 'http://127.0.0.1:8000/dblp/coauthors/' + param +'/'+ query
+            else:
+                url = 'http://127.0.0.1:8000/dblp/coauthors/' + query
+
+            req = urllib2.Request(url)
+            f = urllib2.urlopen(req)
+            result = f.read()
+            result = result[result.find("{",1):-2].replace("\\", "")
+
+            log_para = {'clientip': get_client_ip(request), 'user': 'tempUSER'}
+            pushLog('warning', log_para, url)
+
     except:
-      pass
+        pushLog('error', log_para, sys.exc_info()[0])
+        pass
 
-    if "Can't find Author" in out or not out:
-     target = 'base.html'
+    return result 
 
+
+def searchRelatedPapers(input):
+    return {
+    }
+
+def landing(request):
+    """
+        out = ""
+        target = 'index.html'
+
+        if 'search_param' in request.GET:
+            type = request.GET['search_param']
+            # TODO: this part should be refactored. Either using ajax to call through
+            # rest api, or directly call the function 'findCoAuthor_'.
+            if type == 'coauthor':
+                out = searchByAuthor(request)
+            elif type == 'coauthor L2':
+                out = searchByAuthor(request)
+            elif type == 'papers':
+                out = searchRelatedPapers(request.GET['input'])
+            else:
+                target = 'base.html'
+        else:
+            target = 'base.html'
+
+        return render(request,
+        target,
+        {'out':SafeString(out),
+        })
+    """
+    if not request.COOKIES.get('member'):
+        return render(request, 'sign_in_up.html')
+    return render(request, 'index.html')
+
+def sign_up(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        passwd = request.POST.get('passwd')
+        temp_dict = {email:passwd}
+        in_file = open('member.json')
+        memberlist = simplejson.load(in_file)
+        memberlist.update(temp_dict)
+        in_file.close()
+
+        out_file = open('member.json','w')
+        simplejson.dump(memberlist,out_file, indent=4)
+        out_file.close()
+
+        response =  render(request, 'index.html',{'member':email})
+        response.set_cookie("member",email)
+
+    return response
+
+def sign_out(request):
+    response =  render(request, 'sign_in_up.html')
+    response.delete_cookie('member')
+    return response
+
+def sign_in(request):
+    response =  render(request, 'sign_in_up.html')
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        passwd = request.POST.get('passwd')
+        in_file = open('member.json','r')
+        memberlist = simplejson.load(in_file)
+        if email in memberlist and passwd == memberlist[email]:
+            response =  render(request, 'index.html',{'member':email})
+            response.set_cookie("member",email)
+        in_file.close()
+    return response
+
+def sign(request):
+    if request.COOKIES.get('member'):
+        return render(request,'index.html')
     return render(request,
-    target,
-    {'out':SafeString(out),
-    'query': query,
-    })
-
-def demo_wei(request):
-    print "here"
-    return JsonResponse({'foo': 'bar'})
+    'sign_in_up.html')
 
 
 class CoAuthorNode(object):
@@ -74,7 +163,10 @@ def findCoAuthors(request, name):
         root = findCoAuthorsMultiLevel_(1, name)
     except DoesNotExist as e:
         return JsonResponse({'error': "Can't find Author: " + name})
-    return JsonResponse({'coauthors': simplejson.dumps(root.toDict())})
+    # return JsonResponse({'coauthors': simplejson.dumps(root.toDict())})
+    return JsonResponse({
+        'coauthors':root.toDict()
+    })
 
 def findCoAuthors_(name, visited):
     author = Author.nodes.get(name=name)
@@ -113,4 +205,4 @@ def findCoAuthorsMultiLevel(request, level, name):
         root = findCoAuthorsMultiLevel_(level, name)
     except DoesNotExist as e:
         return JsonResponse({'error': "Can't find Author: " + name})
-    return JsonResponse({'coauthors': simplejson.dumps(root.toDict())})
+    return JsonResponse({'coauthors': root.toDict()})

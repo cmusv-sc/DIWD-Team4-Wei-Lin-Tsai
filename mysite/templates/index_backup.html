@@ -1,85 +1,106 @@
 {% extends "base.html" %}
 
-{% block title %} test {% endblock %}
+{% block json %} {{out}} {% endblock %}
 
-{% block test %}
+{% block result %}
 
 <style>
-
 .node circle {
-  fill: #fff;
-  stroke: steelblue;
-  stroke-width: 1.5px;
+ fill: #fff;
+ stroke: steelblue;
+ stroke-width: 3px;
 }
 
-.node {
-  font: 10px sans-serif;
-  color: #00ff00;
-}
+.node text { font: 12px sans-serif; }
 
 .link {
-  fill: none;
-  stroke: #ccc;
-  stroke-width: 1.5px;
+ fill: none;
+ stroke: #ccc;
+ stroke-width: 2px;
 }
 
 </style>
-<body>
+
 <script src="{{STATIC_URL}}js/d3.min.js"></script>
+<div id="result">
 <script>
 
-var diameter = 960;
+var treeData = [{{out}}];
+// var treeData = [
+// {"name": "Udo Pletat", "children": [{"name": "Toni Bollinger", "children": [{"name": "Sven Lorenz", "children": []}]}, {"name": "Sven Lorenz", "children": [{"name": "Toni Bollinger", "children": []}]}]}
+// ];
+
+// ************** Generate the tree diagram  *****************
+var margin = {top: 0, right: 120, bottom: 20, left: 300},
+ width = 960 - margin.right - margin.left,
+ height = 600 - margin.top - margin.bottom;
+ height = 600 - margin.top - margin.bottom;
+ 
+var i = 0;
 
 var tree = d3.layout.tree()
-    .size([360, diameter / 2 - 120])
-    .separation(function(a, b) { return (a.parent == b.parent ? 1 : 2) / a.depth; });
+ .size([height, width]);
 
-var diagonal = d3.svg.diagonal.radial()
-    .projection(function(d) { return [d.y, d.x / 180 * Math.PI]; });
+var diagonal = d3.svg.diagonal()
+ .projection(function(d) { return [d.y, d.x]; });
 
-var svg = d3.select("#about").append("svg")
-    .attr("width", diameter)
-    .attr("height", diameter - 150)
-    .append("g")
-    .attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ")");
+var svg = d3.select("#result").append("svg")
+ .attr("width", width + margin.right + margin.left)
+ .attr("height", height + margin.top + margin.bottom)
+ .append("g")
+ .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-var input_json = '{{input_json}}';
-var root;
-// d3.json(input_json, function(error, root) {
+root = treeData[0];
+  
+update(root);
 
-try {
-    root = JSON.parse(input_json);
-} catch (e) {
-     throw console.error(e);
+function update(source) {
+
+  // Compute the new tree layout.
+  var nodes = tree.nodes(root).reverse(),
+   links = tree.links(nodes);
+
+  // Normalize for fixed-depth.
+  nodes.forEach(function(d) { d.y = d.depth * 180; });
+
+  // Declare the nodesâ€¦
+  var node = svg.selectAll("g.node")
+   .data(nodes, function(d) { return d.id || (d.id = ++i); });
+
+  // Enter the nodes.
+  var nodeEnter = node.enter().append("g")
+   .attr("class", "node")
+   .attr("transform", function(d) { 
+    return "translate(" + d.y + "," + d.x + ")"; });
+
+  nodeEnter.append("circle")
+   .attr("r", 10)
+   .style("fill", "#fff");
+
+  nodeEnter.append("text")
+   .attr("x", function(d) { 
+    return d.children || d._children ? -13 : 13; })
+   .attr("dy", ".35em")
+   .attr("text-anchor", function(d) { 
+    return d.children || d._children ? "end" : "start"; })
+   .text(function(d) { return d.name; })
+   .style("fill-opacity", 1);
+
+  // Declare the linksâ€¦
+  var link = svg.selectAll("path.link")
+   .data(links, function(d) { return d.target.id; });
+
+  // Enter the links.
+  link.enter().insert("path", "g")
+   .attr("class", "link")
+   .attr("d", diagonal);
+
 }
 
-var nodes = tree.nodes(root),
-  links = tree.links(nodes);
-
-var link = svg.selectAll(".link")
-  .data(links)
-  .enter().append("path")
-  .attr("class", "link")
-  .attr("d", diagonal);
-
-var node = svg.selectAll(".node")
-  .data(nodes)
-  .enter().append("g")
-  .attr("class", "node")
-  .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
-
-node.append("circle")
-  .attr("r", 4.5);
-
-node.append("text")
-  .attr("dy", ".31em")
-  .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
-  .attr("transform", function(d) { return d.x < 180 ? "translate(8)" : "rotate(180)translate(-8)"; })
-  .text(function(d) { return d.name; });
-
-
-d3.select(self.frameElement).style("height", diameter - 150 + "px");
-
 </script>
+</div>
+{% endblock %}
 
+{% block js %}
+<script src="{{STATIC_URL}}js/index.js"></script>
 {% endblock %}
