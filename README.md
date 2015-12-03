@@ -61,6 +61,7 @@ requirement:
   
   python manage.py migrate
 
+  You can find a file named "diwd.db" under mysite/mysite after migration
 
 - create superuser
 
