@@ -74,9 +74,7 @@ $(document).ready(function () {
             $.ajax({
                 url:'/dblp/coauthors/' + content
             }).done(function (ret) {
-                console.log(ret);
-                console.log(ret.coauthors);
-                coauthor(ret);
+                coauthor(ret.coauthors);
             }).fail(function () {
             });
         }
