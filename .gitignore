@@ -1,9 +1,6 @@
 # dblp.xml
 dblp-loader/dblp.xml
 
-# All json file
-*.json
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
