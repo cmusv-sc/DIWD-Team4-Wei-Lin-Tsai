@@ -162,7 +162,30 @@ $(document).ready(function () {
     };
 
     function showRelatedPapers(papers) {
-        
+        console.log("here");
+        var html = "<div id='related-papers'>";
+        papers.forEach(function (paper) {
+           html += "<div class='one-paper'>";
+           html += "<div class='title'>" +
+                      "<span class='prefix'>[PAPER]</span> &nbsp" +
+                      "<span class='content'>" + paper.title + "</span>" +
+                    "</div>";
+
+           html += "<div class='paper-other-info'>"
+           paper.authors.forEach(function (author, index) {
+               if (index == 0) {
+                   html += author.name;
+               } else {
+                   html += ", " + author.name;
+               }
+           });
+           html += " - 1975 - IEEE Transaction... ";
+           html += "</div>";
+           html += "</div>";
+        });
+        html += "</div>";
+        console.log(html);
+        $("#result-showcase").append(html);
     };
 
     $("#search-btn").click(function () {
@@ -206,16 +229,17 @@ $(document).ready(function () {
     });
     var papers = [
         {
-            authors: [ {name: "wei"}, {name: "jerry"}],
-            title: "pub1"
+            authors: [ {name: "Wei Li"}, {name: "Jerry"}],
+            title: "A stupid publication lallalala laalla b"
         },
         {
-            authors: [ {name: "zack"}, {name: "jerry"}],
-            title: "pub2"
+            authors: [ {name: "Zack Liang"}, {name: "Jerry"}],
+            title: "A stupid publication bllalaalalla aaeaaaaaa"
         }
     ];
 
     // showTopKPapers(papers);
+    showRelatedPapers(papers);
     // var treeData = [
     // {"name": "Udo Pletat", "children": [{"name": "Toni Bollinger", "children": [{"name": "Sven Lorenz", "children": []}]}, {"name": "Sven Lorenz", "children": [{"name": "Toni Bollinger", "children": []}]}]}
     // ];

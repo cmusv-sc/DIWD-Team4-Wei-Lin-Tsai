@@ -1,3 +1,9 @@
+
+#result {
+    padding-top:100px;
+    padding-bottom:300px;
+}
+
 .node circle {
  fill: #fff;
  stroke: steelblue;
@@ -28,3 +34,26 @@ line.papers {
     stroke-width: 2px;
 }
 
+#related-papers {
+    text-align: left;
+}
+
+.one-paper {
+    margin-bottom: 10px;
+    margin-left: 20%;
+}
+
+.one-paper .title {
+    color: #1A0DAB;
+    margin: 0px 0px 4px;
+    font-size: 17px;
+}
+
+.one-paper .title span.prefix {
+    font-size: 10px;
+}
+
+.one-paper .paper-other-info {
+    color: #006621;
+    font-size: 13px;
+}
