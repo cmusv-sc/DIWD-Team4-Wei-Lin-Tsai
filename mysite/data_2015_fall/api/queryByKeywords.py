@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from data_2015_fall.models import *
 import Queue
+import simplejson
 
 # ===================================================
 #	Classes 
@@ -28,7 +29,8 @@ class Paper(object):
 
     def toDict(self):
         return {
-            "title": self.title
+            "title": self.title,
+            "authors": [a.toDict() for a in self.authors]
         }
 
 # ===================================================
@@ -41,9 +43,8 @@ def demo_wl(request):
 def getTopKRelevantPapersWithAuthorsByKeywords(request, keywords, k):
     print "call getTopKRelevantPapersWithAuthorsByKeywords()"
     keywordsList = keywords.lower().split("+")
-    for word in keywordsList:
-        print word
-    cnt = 0
+    
+    # calculate its relevance cnt and use priority queue to maintain status 
     pQ = Queue.PriorityQueue()
     for article in Article.nodes:
         lowerTitle = article.title.lower()
@@ -52,15 +53,19 @@ def getTopKRelevantPapersWithAuthorsByKeywords(request, keywords, k):
             if keyword in lowerTitle:
     	       matchCnt += 1
     	if (matchCnt > 0):
-            pQ.put(Paper(article.title, [], matchCnt))
-            cnt += 1
+            pQ.put(Paper(article.title, article.authors, matchCnt))
         if (pQ.qsize() > int(k) + 5): # remove some item if Queue is too large, 5 for margin because qsize is not precise 
             pQ.get()    
-    	#if (cnt > 100):
-    	#	break
 
+    # use list to store the result 
+    papers = []
     while not pQ.empty():
         article = pQ.get()
-        print article.title + "  >>>>>  " + str(article.relevance)   
-
-    return JsonResponse({keywords: k})
+        papers.append(article)
+    papers.reverse()
+    papers = papers[0:int(k)]
+    ''' debug part 
+    for p in papers:
+        print p.title + " >> " + str(p.relevance) + ":  " +  simplejson.dumps(p.toDict())
+    '''
+    return JsonResponse({ "papers": [p.toDict() for p in papers] })   
