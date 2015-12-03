@@ -13,12 +13,6 @@ import simplejson
 	relevance: how relevant of this paper in terms of search quiteria[int] 
 '''
 class Paper(object):
-    title = ""
-    authors = []
-    relevance = 0
-    journal = ""
-    year = 1990
-    volume = 1
     def __init__(self, title, authors, relevance, journal, year, volume):
         self.title = title
         self.authors = authors

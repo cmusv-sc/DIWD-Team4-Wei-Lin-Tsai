@@ -134,8 +134,6 @@ def sign(request):
 
 
 class CoAuthorNode(object):
-    name = ""
-    children = []
     def __init__(self, name, children):
         """
         name: str
