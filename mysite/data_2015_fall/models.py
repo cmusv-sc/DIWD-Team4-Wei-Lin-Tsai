@@ -10,7 +10,6 @@ class Article(StructuredNode):
     volume = StringProperty()
     authors = RelationshipFrom('Author', 'AUTHORED')
 
-
 class Author(StructuredNode):
     name = StringProperty()
     articles = RelationshipTo('Article', 'AUTHORED')
