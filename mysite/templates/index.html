@@ -27,3 +27,9 @@
 {% block js %}
 <script src="{{STATIC_URL}}js/index.js"></script>
 {% endblock %}
+
+{% block login %}
+<li>
+    <a class="page-scroll" href="/logout/">{{member}}</a>
+<li>
+{% endblock %}
