@@ -56,6 +56,17 @@ requirement:
 
   source env/bin/activate
 
+
+- migrate
+  
+  python manage.py migrate
+
+  You can find a file named "diwd.db" under mysite/mysite after migration
+
+- create superuser
+
+  python manage.py createsuperuser
+
 - Run server
 
   cd mysite
@@ -63,3 +74,10 @@ requirement:
   python manage.py runserver
 
   check http://127.0.0.1:8000/
+
+  For admin site, check http://127.0.0.1:8000/admin  (login with the superuser you created)
+
+
+# Using the django authentication system
+
+  https://docs.djangoproject.com/en/1.9/topics/auth/default/#user-objects

@@ -71,3 +71,4 @@ env
 
 dblp.xml
 .idea
+*.db

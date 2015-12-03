@@ -21,6 +21,8 @@
     <link href="{{STATIC_URL}}font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    {% block css %}
+    {% endblock %}
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -55,6 +57,8 @@
                     <li>
                         <a class="page-scroll" href="#result">Result</a>
                     </li>
+                    {% block login %}
+                    {% endblock %}
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
@@ -81,8 +85,9 @@
                                 </button>
                                 <ul class="dropdown-menu" role="menu">
                                   <li><a href="#coauthor">Search CoAuthor</a></li>
-                                  <li><a href="#coauthor L2">Search CoAuthor of CoAuthor</a></li>
-                                  <li><a href="#papers">Search Papers</a></li>
+                                  <li><a href="#coauthor2">Search CoAuthor of CoAuthor</a></li>
+                                  <li><a href="#papers">Search Papers Top 100</a></li>
+                                  <li><a href="#papers-rel">Search Papers Interested In</a></li>
                                 </ul>
                             </div>
                             <input type="hidden" name="search_param" value="1" id="search_param">
