@@ -188,6 +188,24 @@ $(document).ready(function () {
         $("#result-showcase").append(html);
     };
 
+    function showVolumeContrib(journal, volumes) {
+        console.log("haa");
+        function constructGraphFromVolumes(volumes) {
+            var graph = {
+                name: journal
+            };
+            graph.children = volumes.map(function (volume) {
+                return {
+                    name: "volume " + volume.volume,
+                    children: volume.authors
+                };
+            });
+            return graph;
+        };
+        var graph = constructGraphFromVolumes(volumes);
+        coauthor(graph);
+    };
+
     $("#search-btn").click(function () {
         $("#result-showcase").empty();
         var type = $("#search_concept").text();
@@ -223,7 +241,15 @@ $(document).ready(function () {
             }).done(function (ret) {
                 showRelatedPapers(ret.papers);
             }).fail(function () {
-                
+            });
+        } else if (type == 'volume-contrib') {
+            console.log(content);
+            $.ajax({
+                url:'/dblp/contributions/' + content
+            }).done(function (ret) {
+                showVolumeContrib(content, ret.volumes);
+            }).fail(function () {
+
             });
         }
     });
@@ -237,9 +263,11 @@ $(document).ready(function () {
             title: "A stupid publication bllalaalalla aaeaaaaaa"
         }
     ];
+    // var volumes = {"volumes": [{"volume": 16, "authors": [{"name": "weilin cai"}, {"name": "zack"}]}, {"volume": 10, "authors": [{"name": "jerry"}, {"name": "wei"}]}, {"volume": 15, "authors": [{"name": "zack"}, {"name": "wei"}, {"name": "weilin cai"}, {"name": "jerry"}]}]};
 
     // showTopKPapers(papers);
     // showRelatedPapers(papers);
+    // showVolumeContrib("IEEE XXX", volumes.volumes);
     // var treeData = [
     // {"name": "Udo Pletat", "children": [{"name": "Toni Bollinger", "children": [{"name": "Sven Lorenz", "children": []}]}, {"name": "Sven Lorenz", "children": [{"name": "Toni Bollinger", "children": []}]}]}
     // ];
