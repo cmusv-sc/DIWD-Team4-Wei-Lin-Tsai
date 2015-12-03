@@ -179,7 +179,7 @@ $(document).ready(function () {
                    html += ", " + author.name;
                }
            });
-           html += " - 1975 - IEEE Transaction... ";
+           html += " - " + paper.year + " - " + paper.journal;
            html += "</div>";
            html += "</div>";
         });
