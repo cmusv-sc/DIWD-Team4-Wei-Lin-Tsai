@@ -239,7 +239,7 @@ $(document).ready(function () {
     ];
 
     // showTopKPapers(papers);
-    showRelatedPapers(papers);
+    // showRelatedPapers(papers);
     // var treeData = [
     // {"name": "Udo Pletat", "children": [{"name": "Toni Bollinger", "children": [{"name": "Sven Lorenz", "children": []}]}, {"name": "Sven Lorenz", "children": [{"name": "Toni Bollinger", "children": []}]}]}
     // ];
