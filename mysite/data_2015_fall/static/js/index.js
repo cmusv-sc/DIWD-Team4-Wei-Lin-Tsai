@@ -18,7 +18,7 @@ $(document).ready(function () {
         var diagonal = d3.svg.diagonal()
             .projection(function(d) { return [d.y, d.x]; });
 
-        var svg = d3.select("#result").append("svg")
+        var svg = d3.select("#result-showcase").append("svg")
             .attr("width", width + margin.right + margin.left)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
@@ -68,6 +68,7 @@ $(document).ready(function () {
         update();
     };
     $("#search-btn").click(function () {
+        $("#result-showcase").empty();
         var type = $("#search_concept").text();
         var content = $("#search-content").val();
         if (type == 'coauthor') {
@@ -77,6 +78,14 @@ $(document).ready(function () {
                 coauthor(ret.coauthors);
             }).fail(function () {
             });
+        } else if (type == 'coauthor2') {
+            $.ajax({
+                url:'/dblp/coauthors/2/' + content
+            }).done(function (ret) {
+                coauthor(ret.coauthors);
+            }).fail(function () {
+
+            })
         }
     });
     // var treeData = [
