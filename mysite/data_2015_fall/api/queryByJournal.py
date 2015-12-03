@@ -7,17 +7,17 @@ from collections import defaultdict
 #	Classes 
 # ===================================================
 class VolumeContribution(object):
-    volume = ""
-    authors = []
     def __init__(self, volume, authors):
         self.volume = volume
-        self.authors = authors
-
+        self.authorsInJson = [];
+        for a in authors:
+            self.authorsInJson.append(a.toDict())
+        self.authorsInJson.sort()
     def toDict(self):
         return {
             "volume": self.volume,
-            "authors": [a.toDict() for a in self.authors]
-        }
+            "authors": [v for v in self.authorsInJson]
+        } 
 
 # ===================================================
 #	Functions 
