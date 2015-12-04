@@ -5,6 +5,10 @@ dblp-loader/dblp.xml
 __pycache__/
 *.py[cod]
 
+# member.json
+mysite/*.json
+*.json
+
 # C extensions
 *.so
 
