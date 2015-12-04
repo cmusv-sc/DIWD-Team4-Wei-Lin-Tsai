@@ -206,6 +206,72 @@ $(document).ready(function () {
         coauthor(graph);
     };
 
+    function showPath(path) {
+        var width = 960,
+            height = 500;
+        var nodes = {};
+        var links = []
+        // console.log(path);
+        for (var i = 1; i < path.length; i++) {
+            links.push({
+                source: path[i],
+                target: path[i-1]
+            })
+        };
+
+        links.forEach(function (link) {
+            link.source = nodes[link.source] || (nodes[link.source] = {name: link.source});
+            link.target = nodes[link.target] || (nodes[link.target] = {name: link.target});
+        });
+        var graph = {
+            nodes:nodes,
+            links:links
+        };
+
+        var svg = d3.select("#result-showcase").append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        var force = d3.layout.force()
+            .nodes(d3.values(graph.nodes))
+            .links(links)
+            .charge(-120) // TODO: what's this?
+            .linkDistance(30) // TODO: what's this?
+            .size([width, height])
+            .start();
+
+        var link = svg.selectAll(".link")
+            .data(force.links())
+            .enter().append("line")
+            .attr("class", "papers");
+            // .style("stroke-width", function(d) { return Math.sqrt(d.value); });
+
+        var node = svg.selectAll(".node")
+            .data(force.nodes())
+            .enter().append("g")
+            .attr("class", "papers")
+            // .style("fill", function(d) { return color(d.group); })
+            .call(force.drag);
+
+        node.append("circle").attr("r", 5);
+        node.append("text")
+            .attr("x", 12)
+            .attr("dy", ".35em")
+            .text(function (d) { return d.name; });
+
+        force.on("tick", function () {
+            link.attr("x1", function(d) { return d.source.x; })
+                .attr("y1", function(d) { return d.source.y; })
+                .attr("x2", function(d) { return d.target.x; })
+                .attr("y2", function(d) { return d.target.y; });
+
+            node.attr("transform", function (d) {
+                return "translate(" + d.x + "," + d.y + ")";
+            });
+
+        });
+    }
+
     $("#search-btn").click(function () {
         $("#result-showcase").empty();
         var type = $("#search_concept").text();
@@ -262,6 +328,18 @@ $(document).ready(function () {
             }).fail(function () {
 
             });
+        } else if (type == 'smallworld') {
+            var keywords = content.split('+');
+            var name1 = keywords[0]
+            var name2 = keywords[1];
+            $.ajax({
+                url: '/dblp/path/' + name1 + "/" + name2
+            }).done(function (ret) {
+                if (ret.found) {
+                    showPath(ret.path);
+                }
+            }).fail(function () {
+            })
         }
     });
     var papers = [
@@ -276,6 +354,9 @@ $(document).ready(function () {
     ];
     var volumes = {"volumes": [{"volume": 16, "authors": [{"name": "weilin cai"}, {"name": "zack"}]}, {"volume": 10, "authors": [{"name": "jerry"}, {"name": "wei"}]}, {"volume": 15, "authors": [{"name": "zack"}, {"name": "wei"}, {"name": "weilin cai"}, {"name": "jerry"}]}]};
 
+    var path = [{name: "wei"}, {name: "jerry"}, {name: "zack"}];
+
+    // showPath();
     // showTopKPapers(papers);
     // showRelatedPapers(papers);
     // showVolumeContrib("IEEE XXX", volumes.volumes);
