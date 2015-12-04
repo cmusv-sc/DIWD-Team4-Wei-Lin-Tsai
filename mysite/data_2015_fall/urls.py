@@ -9,5 +9,5 @@ urlpatterns = [
     url(r'^papers/(?P<keywords>.+)/(?P<k>\d+)$', getTopKRelevantPapersWithAuthorsByKeywords),
     url(r'^contributions/(?P<name>.+)$', getAuthorContributionToAJournal),
     url(r'^path/(?P<start>.+)/(?P<end>.+)$', findPath),
-    url(r'^experts/(?P<keywords>.+)/(?P<k>\d+)$', getTopKExpertsByKeywords)
+    url(r'^collaborators/(?P<name>.+)/(?P<keywords>.+)/(?P<k>\d+)$', queryCollaboratorsByNameAndKeyWords)
 ]
