@@ -179,13 +179,31 @@ $(document).ready(function () {
                    html += ", " + author.name;
                }
            });
-           html += " - 1975 - IEEE Transaction... ";
+           html += " - " + paper.year + " - " + paper.journal;
            html += "</div>";
            html += "</div>";
         });
         html += "</div>";
         console.log(html);
         $("#result-showcase").append(html);
+    };
+
+    function showVolumeContrib(journal, volumes) {
+        console.log("haa");
+        function constructGraphFromVolumes(volumes) {
+            var graph = {
+                name: journal
+            };
+            graph.children = volumes.map(function (volume) {
+                return {
+                    name: "volume " + volume.volume,
+                    children: volume.authors
+                };
+            });
+            return graph;
+        };
+        var graph = constructGraphFromVolumes(volumes);
+        coauthor(graph);
     };
 
     $("#search-btn").click(function () {
@@ -208,11 +226,22 @@ $(document).ready(function () {
 
             });
         } else if (type == 'papers') {
+            var count = "10";
+            var keywords = content.split('+');
+            var re = /^\d+$/;
+            // last word is number
+            if (keywords.length > 1 && re.test(keywords[keywords.length-1])) {
+                content = keywords.slice(0, keywords.length-1).join("+");
+                count = keywords[keywords.length-1]
+            }
+
+            console.log(content, count);
+
             // top k related papers
             $.ajax({
-                url:'/dblp/papers/' + content + '/100'
+                url:'/dblp/papers/' + content + "/" + count
             }).done(function (ret) {
-                console.log(ret);
+                // console.log(ret);
                 showTopKPapers(ret.papers);
             }).fail(function () {
             })
@@ -223,7 +252,15 @@ $(document).ready(function () {
             }).done(function (ret) {
                 showRelatedPapers(ret.papers);
             }).fail(function () {
-                
+            });
+        } else if (type == 'volume-contrib') {
+            console.log(content);
+            $.ajax({
+                url:'/dblp/contributions/' + content
+            }).done(function (ret) {
+                showVolumeContrib(content, ret.volumes);
+            }).fail(function () {
+
             });
         }
     });
@@ -237,9 +274,11 @@ $(document).ready(function () {
             title: "A stupid publication bllalaalalla aaeaaaaaa"
         }
     ];
+    var volumes = {"volumes": [{"volume": 16, "authors": [{"name": "weilin cai"}, {"name": "zack"}]}, {"volume": 10, "authors": [{"name": "jerry"}, {"name": "wei"}]}, {"volume": 15, "authors": [{"name": "zack"}, {"name": "wei"}, {"name": "weilin cai"}, {"name": "jerry"}]}]};
 
     // showTopKPapers(papers);
     // showRelatedPapers(papers);
+    // showVolumeContrib("IEEE XXX", volumes.volumes);
     // var treeData = [
     // {"name": "Udo Pletat", "children": [{"name": "Toni Bollinger", "children": [{"name": "Sven Lorenz", "children": []}]}, {"name": "Sven Lorenz", "children": [{"name": "Toni Bollinger", "children": []}]}]}
     // ];

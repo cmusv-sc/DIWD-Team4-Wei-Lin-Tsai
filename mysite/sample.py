@@ -15,10 +15,10 @@ def mockData():
     )
 
     pubs = Article.create(
-    {'title':'pub1', 'journal':'IEEE XXX', 'year' : 2015, 'volumn': 10},
-    {'title':'pub2', 'journal':'IEEE XXX', 'year' : 2015, 'volumn':15},
-    {'title':'pub3', 'journal':'IEEE XXX', 'year' : 2015, 'volumn':15},
-    {'title':'pub4', 'journal':'IEEE XXX', 'year' : 2015, 'volumn':15},
+    {'title':'pub1', 'journal':'IEEE XXX', 'year' : 2015, 'volume': 10},
+    {'title':'pub2', 'journal':'IEEE XXX', 'year' : 2015, 'volume':15},
+    {'title':'pub3', 'journal':'IEEE XXX', 'year' : 2015, 'volume':15},
+    {'title':'pub4', 'journal':'IEEE XXX', 'year' : 2015, 'volume':16},
     )
     for user in users:
         user.save()
@@ -36,6 +36,6 @@ def mockData():
     users[3].articles.connect(pubs[3])
 
 
-# mockData()
-print findCoAuthorsMultiLevel_(1, "wei").toDict()
-print findCoAuthorsMultiLevel_(2, "wei").toDict()
+mockData()
+# print findCoAuthorsMultiLevel_(1, "wei").toDict()
+# print findCoAuthorsMultiLevel_(2, "wei").toDict()
