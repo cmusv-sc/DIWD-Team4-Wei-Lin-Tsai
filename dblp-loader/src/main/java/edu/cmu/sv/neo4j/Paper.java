@@ -3,6 +3,7 @@ import java.util.ArrayList;
 
 
 public class Paper {
+	public Long id;
     public String key;
     public String title;
     public String booktitle;
@@ -10,9 +11,11 @@ public class Paper {
     public String volume;
     public Integer year;
     public ArrayList<String> authors;
+    public ArrayList<String> citations;
     
     public Paper(){
-        authors = new ArrayList<String>();
+        authors = new ArrayList<>();
+        citations = new ArrayList<>();
     }
 
     @Override
