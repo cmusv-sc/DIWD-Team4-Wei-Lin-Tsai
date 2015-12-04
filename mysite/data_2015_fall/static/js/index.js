@@ -226,11 +226,22 @@ $(document).ready(function () {
 
             });
         } else if (type == 'papers') {
+            var count = "10";
+            var keywords = content.split('+');
+            var re = /^\d+$/;
+            // last word is number
+            if (keywords.length > 1 && re.test(keywords[keywords.length-1])) {
+                content = keywords.slice(0, keywords.length-1).join("+");
+                count = keywords[keywords.length-1]
+            }
+
+            console.log(content, count);
+
             // top k related papers
             $.ajax({
-                url:'/dblp/papers/' + content + '/100'
+                url:'/dblp/papers/' + content + "/" + count
             }).done(function (ret) {
-                console.log(ret);
+                // console.log(ret);
                 showTopKPapers(ret.papers);
             }).fail(function () {
             })
