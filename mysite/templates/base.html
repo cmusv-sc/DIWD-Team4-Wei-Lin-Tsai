@@ -4,6 +4,7 @@
 <head>
 
     <meta charset="utf-8">
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" /> 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
@@ -76,7 +77,6 @@
                 <div class="row">
                     <div class="col-md-8 col-md-offset-2">
                         <p class="intro-text">DBLP search tool </p>
-
                         <div class="form-horizontal">
                             <div class="input-group">
                             <div class="input-group-btn search-panel">
@@ -89,6 +89,7 @@
                                   <li><a href="#papers">Search Papers Top 100</a></li>
                                   <li><a href="#papers-rel">Search Papers Interested In</a></li>
                                   <li><a href="#volume-contrib">Get Contributors to Volumes of a Journal</a></li>
+                                  <li><a href="#search-expert">Search Experts in Fields</a></li>
                                 </ul>
                             </div>
                             <input type="hidden" name="search_param" value="1" id="search_param">
@@ -99,6 +100,11 @@
                             </span>
                             </div>
                         </div>
+                        <div class="lines"></div>
+                        <div class="recent-search">
+                            <li> Recent Search:</li>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -128,6 +134,7 @@
 
     <!-- jQuery -->
     <script src="{{STATIC_URL}}js/jquery.js"></script>
+    <script src="{{STATIC_URL}}js/js.cookie.js"></script>
 
     <!-- Bootstrap Core JavaScript -->
     <script src="{{STATIC_URL}}js/bootstrap.min.js"></script>

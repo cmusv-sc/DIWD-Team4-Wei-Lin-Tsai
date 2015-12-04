@@ -43,22 +43,22 @@ line.papers {
     stroke-width: 2px;
 }
 
-#related-papers {
+#related-papers, #related-experts {
     text-align: left;
 }
 
-.one-paper {
+.one-paper, .one-expert {
     margin-bottom: 10px;
     margin-left: 20%;
 }
 
-.one-paper .title {
+.one-paper .title, .one-expert .expert-name {
     color: #1A0DAB;
     margin: 0px 0px 4px;
     font-size: 17px;
 }
 
-.one-paper .title span.prefix {
+.one-paper .title span.prefix , .one-expert .expert-name span.prefix {
     font-size: 10px;
 }
 
@@ -66,3 +66,38 @@ line.papers {
     color: #006621;
     font-size: 13px;
 }
+
+.recent-search {
+  background-color: #f5f5f5;
+  color: #555;
+  font-size: 22px;
+  padding: 0 !important;
+  font-family: courier, monospace;
+  border: 1px solid #dedede;
+}
+
+.recent-search li {
+  list-style: none;
+  border-bottom: 1px dotted #ccc;
+  text-indent: 10px;
+  height: auto;
+  padding: 10px;
+  text-transform: capitalize;
+  text-align: left;
+}
+
+.recent-search li:hover {
+  background-color: #f0f0f0;
+  -webkit-transition: all 0.2s;
+  -moz-transition:    all 0.2s;
+  -ms-transition:     all 0.2s;
+  -o-transition:      all 0.2s;
+}
+
+.lines {
+  border-left: 1px solid #ffaa9f;
+  border-right: 1px solid #ffaa9f;
+  width: 2px;
+  float: left;
+  margin-left: 40px;
+}​

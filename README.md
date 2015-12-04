@@ -40,7 +40,11 @@ requirement:
 
 - Download dblp.xml file at http://dblp.uni-trier.de/xml/ and extract to dblp-loader/
 
-- Run DBLP parser
+- Configure max heap size in maven
+
+  echo "export MAVEN_OPTS=\"-Xmx6G\"" > ~/.mavenrc
+
+- Run DBLP parser (This will take about 5~10 minutes)
   
   mvn exec:java -Dexec.mainClass="edu.cmu.sv.neo4j.Loader" -Dexec.cleanupDaemonThreads=false
 

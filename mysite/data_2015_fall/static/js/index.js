@@ -190,26 +190,77 @@ $(document).ready(function () {
 
     function showVolumeContrib(journal, volumes) {
         console.log("haa");
-        function constructGraphFromVolumes(volumes) {
-            var graph = {
-                name: journal
-            };
-            graph.children = volumes.map(function (volume) {
-                return {
-                    name: "volume " + volume.volume,
-                    children: volume.authors
-                };
-            });
-            return graph;
-        };
-        var graph = constructGraphFromVolumes(volumes);
-        coauthor(graph);
+         function constructGraphFromVolumes(volumes) {
+             var graph = {
+                 name: journal
+             };
+             graph.children = volumes.map(function (volume) {
+                 return {
+                     name: "volume " + volume.volume,
+                     children: volume.authors
+                 };
+             });
+             return graph;
+         };
+         var graph = constructGraphFromVolumes(volumes);
+         coauthor(graph);
+     };
+
+    function showExperts(experts) {
+        console.log("test test");
+        var html = "<div id='related-experts'>";
+        experts.forEach(function (expert) {
+           html += "<div class='one-expert'>";
+           html += "<div class='expert-name'>" +
+                      "<span class='prefix'>[Name]</span> &nbsp" +
+                      "<span class='content'>" + expert.name + "</span>" +
+                    "</div>";
+
+           html += "</div>";
+        });
+        html += "</div>";
+        console.log(html);
+        $("#result-showcase").append(html);
+        
     };
+
+    function showRecentSearch() {
+        var recent_arr = [];
+        if (Cookies.get('recent')) {
+                recent_arr = Cookies.getJSON('recent');
+            }
+        $(".recent-search").children().next().remove();
+            for (var i = 0; i<recent_arr.length; i++) {
+                var type = JSON.parse(JSON.stringify(recent_arr[i]))['type']
+                var query = JSON.parse(JSON.stringify(recent_arr[i]))['query']
+                $(".recent-search").append('<li>'+ type + ':\t' + query +'</li>')
+            }
+            $(".lines").css("height", $(".recent-search").height());
+    };
+    
+    $(document).ready(function() {
+        showRecentSearch();
+    });
 
     $("#search-btn").click(function () {
         $("#result-showcase").empty();
         var type = $("#search_concept").text();
         var content = $("#search-content").val();
+        
+        // store most five recent search query
+        var recent_arr = [];
+        if (Cookies.get('recent')) {
+            recent_arr = Cookies.getJSON('recent');
+        }
+        if (recent_arr.length == 5) {
+            //remove from head
+            recent_arr.splice(0,1);
+        }
+        recent_arr.push({type:type, query:content});
+        Cookies.set('recent', recent_arr);
+
+        showRecentSearch();
+
         if (type == 'coauthor') {
             $.ajax({
                 url:'/dblp/coauthors/' + content
@@ -259,6 +310,15 @@ $(document).ready(function () {
                 url:'/dblp/contributions/' + content
             }).done(function (ret) {
                 showVolumeContrib(content, ret.volumes);
+            }).fail(function () {
+
+            });
+        } else if (type == 'search-expert') {
+            console.log(content);
+            $.ajax({
+                url:'/dblp/experts/' + content + '/10'
+            }).done(function (ret) {
+                showExperts(ret.experts);
             }).fail(function () {
 
             });
