@@ -104,7 +104,7 @@ def sign_up(request):
         simplejson.dump(memberlist,out_file, indent=4)
         out_file.close()
 
-        response =  render(request, 'index.html',{'logout '+ email[0:email.find('@')]})
+        response =  render(request, 'index.html',{'member':'logout '+ email[0:email.find('@')]})
         response.set_cookie("member",email)
 
     return response

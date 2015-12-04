@@ -322,6 +322,17 @@ $(document).ready(function () {
             }).fail(function () {
 
             });
+        } else if (type == 'search-collaborators') {
+            var name = content.substring(0, content.indexOf('+'))
+            var keywords = content.replace(name+'+', '')
+            console.log(name, keywords);
+            $.ajax({
+                url:'/dblp/collaborators/' + name + '/' + keywords + '/10'
+            }).done(function (ret) {
+                showExperts(ret.collaborators);
+            }).fail(function () {
+
+            });
         }
     });
     var papers = [
