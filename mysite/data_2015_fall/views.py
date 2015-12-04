@@ -11,6 +11,7 @@ from data_2015_fall.models import *
 from neomodel import DoesNotExist
 from api.queryByKeywords import *
 from api.queryByJournal import *
+from api.queryExperts import *
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -103,7 +104,7 @@ def sign_up(request):
         simplejson.dump(memberlist,out_file, indent=4)
         out_file.close()
 
-        response =  render(request, 'index.html',{'logout '+ email})
+        response =  render(request, 'index.html',{'logout '+ email[0:email.find('@')]})
         response.set_cookie("member",email)
 
     return response
@@ -121,7 +122,7 @@ def sign_in(request):
         in_file = open('member.json','r')
         memberlist = simplejson.load(in_file)
         if email in memberlist and passwd == memberlist[email]:
-            response =  render(request, 'index.html',{'member':'logout '+ email})
+            response =  render(request, 'index.html',{'member':'logout '+ email[0:email.find('@')]})
             response.set_cookie("member",email)
         in_file.close()
     return response
