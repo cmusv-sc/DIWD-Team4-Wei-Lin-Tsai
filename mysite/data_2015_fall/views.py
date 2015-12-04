@@ -12,6 +12,7 @@ from neomodel import DoesNotExist
 from api.queryByKeywords import *
 from api.queryByJournal import *
 from api.queryExperts import *
+from api.queryCollaborators import *
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
