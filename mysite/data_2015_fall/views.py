@@ -1,6 +1,8 @@
 # Create your views here.
 from datetime import datetime
 from django.shortcuts import render
+from django.shortcuts import render_to_response
+from django.template import RequestContext
 import simplejson
 import urllib2
 import logging
@@ -92,6 +94,11 @@ def landing(request):
     return render(request, 'index.html')
 
 def sign_up(request):
+    if request.COOKIES.get('member'):
+        email = request.COOKIES.get('member')
+        response =  render(request, 'index.html',{'member':'logout '+ email[0:email.find('@')]})
+        response.set_cookie("member",email)
+        return response
     if request.method == 'POST':
         email = request.POST.get('email')
         passwd = request.POST.get('passwd')
@@ -105,7 +112,8 @@ def sign_up(request):
         simplejson.dump(memberlist,out_file, indent=4)
         out_file.close()
 
-        response =  render(request, 'index.html',{'member':'logout '+ email[0:email.find('@')]})
+        response =  render_to_response('index.html',{'member':'logout '+ email[0:email.find('@')]},
+            context_instance=RequestContext(request))
         response.set_cookie("member",email)
 
     return response
