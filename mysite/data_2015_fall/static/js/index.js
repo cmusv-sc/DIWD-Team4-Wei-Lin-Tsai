@@ -205,7 +205,6 @@ $(document).ready(function () {
          var graph = constructGraphFromVolumes(volumes);
          coauthor(graph);
      };
-    };
 
     function showExperts(journal, volumes) {
         console.log("test test");
