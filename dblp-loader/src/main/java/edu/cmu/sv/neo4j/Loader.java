@@ -1,16 +1,14 @@
 package edu.cmu.sv.neo4j;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Loader {
     private static Map<String, Paper> allPublications = new HashMap<>();
     private Map<String, Long> allAuthors = new HashMap<>();
 
     public void createNodes() throws Exception {
-    	for (Paper paper: allPublications.values()) {
+    	for (Map.Entry<String, Paper> entry: allPublications.entrySet()) {
+    		Paper paper = entry.getValue();
 			long titleNodeId = GraphDb.createPublication(paper);
 			paper.id = titleNodeId;
 			for (String author: paper.authors) {
@@ -24,26 +22,19 @@ public class Loader {
     }
 
     public void createRelationships() {
-    	Set<String> allRelationships = new HashSet<>();
-
-		for (Paper paper: allPublications.values()) {
+		for (Map.Entry<String, Paper> entry: allPublications.entrySet()) {
+			Paper paper = entry.getValue();
 			// Create AUTHORED relationship
 			for (String author: paper.authors) {
 				long authorNodeId = allAuthors.get(author);
-				if (!allRelationships.contains(paper.id + "->" + authorNodeId)) {
-					allRelationships.add(paper.id + "->" + authorNodeId);
-					GraphDb.createRelationship(paper.id, authorNodeId, GraphDb.AUTHOR_RELATIONSHIP);
-				}
-				if (!allRelationships.contains(authorNodeId + "->" + paper.id)) {
-					allRelationships.add(authorNodeId + "->" + paper.id);
-					GraphDb.createRelationship(authorNodeId, paper.id, GraphDb.AUTHOR_RELATIONSHIP);
-				}
+				GraphDb.createRelationship(paper.id, authorNodeId, GraphDb.AUTHOR_RELATIONSHIP);
+				GraphDb.createRelationship(authorNodeId, paper.id, GraphDb.AUTHOR_RELATIONSHIP);
 			}
 
 			// Create CITED relationship
-			for (String key: paper.citations) {
-				if (allPublications.containsKey(key)) {
-					Paper citation = allPublications.get(key);
+			for (String citationKey: paper.citations) {
+				if (allPublications.containsKey(citationKey)) {
+					Paper citation = allPublications.get(citationKey);
 					GraphDb.createRelationship(paper.id, citation.id, GraphDb.CITATION_RELATIONSHIP);
 				}
 			}
@@ -51,13 +42,13 @@ public class Loader {
     }
 
     public static void main(String args[]) {
-        System.out.println("Loading XML file...");
         System.setProperty("entityExpansionLimit", "1000000");
 
         Parser parser = new Parser();
         try {
+            System.out.println("Loading XML file...");
         	parser.parse(allPublications);
-            System.out.println("Complete Loading " + parser.numRecords + " records into Neo4j.");
+            System.out.println("Complete loading " + parser.numRecords + " records.");
         } catch (Exception e) {
         	e.printStackTrace();
         }
@@ -65,8 +56,11 @@ public class Loader {
 		Loader loader = new Loader();
 		GraphDb.open();
 		try {
+			System.out.println("Inserting nodes into Neo4j....");
 			loader.createNodes();
+			System.out.println("Creating relationships...");
 			loader.createRelationships();
+			System.out.println("Finish.");
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

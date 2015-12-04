@@ -28,7 +28,7 @@ public class Parser {
     class SAXHandler extends DefaultHandler {
 		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes) {
-			if (numRecords < 10000) {
+			if (numRecords < Integer.MAX_VALUE) {
 				switch (qName) {
 				case "article":
 				case "inproceedings":
@@ -43,35 +43,39 @@ public class Parser {
 		public void endElement(String uri, String localName, String qName) throws SAXException {
 			if (isNewRecord) {
 				switch (qName) {
-				case "author":
-					paper.authors.add(content);
-					break;
-				case "title":
-					paper.title = content;
-					break;
-				case "booktitle":
-					paper.booktitle = content;
-					break;
-				case "journal":
-					paper.journal = content;
-					break;
-				case "volume":
-					paper.volume = content;
-					break;
-				case "year":
-					paper.year = Integer.parseInt(content);
-					break;
-				case "cite":
-					paper.citations.add(content);
-					break;
-				case "article":
-				case "inproceedings":
-					numRecords++;
-					isNewRecord = false;
-					if (allPublications.containsKey(paper.key)) {
-						System.out.println("Duplicate records for publications.");
-					}
-					allPublications.put(paper.key, paper);
+					case "author":
+						paper.authors.add(content);
+						break;
+					case "title":
+						paper.title = content;
+						break;
+					case "booktitle":
+						paper.booktitle = content;
+						break;
+					case "journal":
+						paper.journal = content;
+						break;
+					case "volume":
+						paper.volume = content;
+						break;
+					case "year":
+						paper.year = Integer.parseInt(content);
+						break;
+					case "cite":
+						paper.citations.add(content);
+						break;
+					case "article":
+					case "inproceedings":
+					case "proceedings":
+					case "book":
+						numRecords++;
+						isNewRecord = false;
+						if (allPublications.containsKey(paper.key)) {
+							System.out.println("Duplicate records for publications.");
+						}
+						allPublications.put(paper.key, paper);
+						break;
+					default:
 				}
 			}
 		}
