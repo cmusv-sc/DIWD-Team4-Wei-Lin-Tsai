@@ -3,7 +3,7 @@ import os
 os.environ['NEO4J_REST_URL'] = 'http://neo4j:123456@localhost:7474/db/data/'
 
 from data_2015_fall.models import *
-from data_2015_fall.views import findCoAuthorsMultiLevel_
+from data_2015_fall.views import *
 
 
 def mockData():
@@ -36,6 +36,10 @@ def mockData():
     users[3].articles.connect(pubs[3])
 
 
-mockData()
+# mockData()
 # print findCoAuthorsMultiLevel_(1, "wei").toDict()
 # print findCoAuthorsMultiLevel_(2, "wei").toDict()
+
+# print findCoAuthors_("jerry", {})
+print findPathBIBFS("wei", "jerry")
+print findPathBIBFS("wei", "weilin cai")

@@ -188,23 +188,171 @@ $(document).ready(function () {
         $("#result-showcase").append(html);
     };
 
+    function showVolumeContrib1(journal, volumes) {
+        function constructGraphFromVolumes(volumes) {
+            var graph = {
+                name: journal
+            };
+            graph.children = volumes.map(function (volume) {
+                return {
+                    name: "volume " + volume.volume,
+                    children: volume.authors
+                };
+            });
+            return graph;
+        };
+        var graph = constructGraphFromVolumes(volumes);
+        coauthor(graph);
+    };
+
     function showVolumeContrib(journal, volumes) {
-        console.log("haa");
-         function constructGraphFromVolumes(volumes) {
-             var graph = {
-                 name: journal
-             };
-             graph.children = volumes.map(function (volume) {
-                 return {
-                     name: "volume " + volume.volume,
-                     children: volume.authors
-                 };
-             });
-             return graph;
-         };
-         var graph = constructGraphFromVolumes(volumes);
-         coauthor(graph);
-     };
+        function constructGraphFromVolumes(volumes) {
+            var graph = {
+                name: journal
+            };
+            graph.children = volumes.map(function (volume) {
+                return {
+                    name: "volume " + volume.volume,
+                    children: volume.authors
+                };
+            });
+            return graph;
+        };
+        var root = constructGraphFromVolumes(volumes);
+        var margin = {top: 20, right: 120, bottom: 20, left: 120},
+            width = 960 - margin.right - margin.left,
+            height = 800 - margin.top - margin.bottom;
+
+        var i = 0,
+            duration = 750;
+
+        var tree = d3.layout.tree()
+            .size([height, width]);
+
+        var diagonal = d3.svg.diagonal()
+            .projection(function(d) { return [d.y, d.x]; });
+
+        var svg = d3.select("#result-showcase").append("svg")
+            .attr("width", width + margin.right + margin.left)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        root.x0 = height / 2;
+        root.y0 = 0;
+
+        function collapse(d) {
+            if (d.children) {
+                d._children = d.children;
+                d._children.forEach(collapse);
+                d.children = null;
+            }
+        }
+
+        root.children.forEach(collapse);
+        update(root);
+
+        d3.select(self.frameElement).style("height", "800px");
+
+        function update(source) {
+
+            // Compute the new tree layout.
+            var nodes = tree.nodes(root).reverse(),
+                links = tree.links(nodes);
+
+            // Normalize for fixed-depth.
+            nodes.forEach(function(d) { d.y = d.depth * 180; });
+
+            // Update the nodes…
+            var node = svg.selectAll("g.node")
+                .data(nodes, function(d) { return d.id || (d.id = ++i); });
+
+            // Enter any new nodes at the parent's previous position.
+            var nodeEnter = node.enter().append("g")
+                .attr("class", "node")
+                .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
+                .on("click", click);
+
+            nodeEnter.append("circle")
+                .attr("r", 1e-6)
+                .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+
+            nodeEnter.append("text")
+                .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
+                .attr("dy", ".35em")
+                .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
+                .text(function(d) { return d.name; })
+                .style("fill-opacity", 1e-6);
+
+            // Transition nodes to their new position.
+            var nodeUpdate = node.transition()
+                .duration(duration)
+                .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
+
+            nodeUpdate.select("circle")
+                .attr("r", 4.5)
+                .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+
+            nodeUpdate.select("text")
+                .style("fill-opacity", 1);
+
+            // Transition exiting nodes to the parent's new position.
+            var nodeExit = node.exit().transition()
+                .duration(duration)
+                .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
+                .remove();
+
+            nodeExit.select("circle")
+                .attr("r", 1e-6);
+
+            nodeExit.select("text")
+                .style("fill-opacity", 1e-6);
+
+            // Update the links…
+            var link = svg.selectAll("path.link")
+                .data(links, function(d) { return d.target.id; });
+
+            // Enter any new links at the parent's previous position.
+            link.enter().insert("path", "g")
+                .attr("class", "link")
+                .attr("d", function(d) {
+                    var o = {x: source.x0, y: source.y0};
+                    return diagonal({source: o, target: o});
+                });
+
+            // Transition links to their new position.
+            link.transition()
+                .duration(duration)
+                .attr("d", diagonal);
+
+            // Transition exiting nodes to the parent's new position.
+            link.exit().transition()
+                .duration(duration)
+                .attr("d", function(d) {
+                    var o = {x: source.x, y: source.y};
+                    return diagonal({source: o, target: o});
+                })
+                .remove();
+
+            // Stash the old positions for transition.
+            nodes.forEach(function(d) {
+                d.x0 = d.x;
+                d.y0 = d.y;
+            });
+        }
+
+        // Toggle children on click.
+        function click(d) {
+            if (d.children) {
+                d._children = d.children;
+                d.children = null;
+            } else {
+                d.children = d._children;
+                d._children = null;
+            }
+            update(d);
+        }
+    };
 
     function showExperts(experts) {
         console.log("test test");
@@ -224,6 +372,71 @@ $(document).ready(function () {
         
     };
 
+    function showPath(path) {
+        var width = 960,
+            height = 500;
+        var nodes = {};
+        var links = []
+        // console.log(path);
+        for (var i = 1; i < path.length; i++) {
+            links.push({
+                source: path[i],
+                target: path[i-1]
+            })
+        };
+
+        links.forEach(function (link) {
+            link.source = nodes[link.source] || (nodes[link.source] = {name: link.source});
+            link.target = nodes[link.target] || (nodes[link.target] = {name: link.target});
+        });
+        var graph = {
+            nodes:nodes,
+            links:links
+        };
+
+        var svg = d3.select("#result-showcase").append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        var force = d3.layout.force()
+            .nodes(d3.values(graph.nodes))
+            .links(links)
+            .charge(-120) // TODO: what's this?
+            .linkDistance(30) // TODO: what's this?
+            .size([width, height])
+            .start();
+
+        var link = svg.selectAll(".link")
+            .data(force.links())
+            .enter().append("line")
+            .attr("class", "papers");
+            // .style("stroke-width", function(d) { return Math.sqrt(d.value); });
+
+        var node = svg.selectAll(".node")
+            .data(force.nodes())
+            .enter().append("g")
+            .attr("class", "papers")
+            // .style("fill", function(d) { return color(d.group); })
+            .call(force.drag);
+
+        node.append("circle").attr("r", 5);
+        node.append("text")
+            .attr("x", 12)
+            .attr("dy", ".35em")
+            .text(function (d) { return d.name; });
+
+        force.on("tick", function () {
+            link.attr("x1", function(d) { return d.source.x; })
+                .attr("y1", function(d) { return d.source.y; })
+                .attr("x2", function(d) { return d.target.x; })
+                .attr("y2", function(d) { return d.target.y; });
+
+            node.attr("transform", function (d) {
+                return "translate(" + d.x + "," + d.y + ")";
+            });
+
+        });
+    }
     function showRecentSearch() {
         var recent_arr = [];
         if (Cookies.get('recent')) {
@@ -237,10 +450,8 @@ $(document).ready(function () {
             }
             $(".lines").css("height", $(".recent-search").height());
     };
-    
-    $(document).ready(function() {
-        showRecentSearch();
-    });
+
+    showRecentSearch();
 
     $("#search-btn").click(function () {
         $("#result-showcase").empty();
@@ -313,6 +524,18 @@ $(document).ready(function () {
             }).fail(function () {
 
             });
+        } else if (type == 'smallworld') {
+            var keywords = content.split('+');
+            var name1 = keywords[0]
+            var name2 = keywords[1];
+            $.ajax({
+                url: '/dblp/path/' + name1 + "/" + name2
+            }).done(function (ret) {
+                if (ret.found) {
+                    showPath(ret.path);
+                }
+            }).fail(function () {
+            })
         } else if (type == 'search-expert') {
             console.log(content);
             $.ajax({
@@ -347,6 +570,9 @@ $(document).ready(function () {
     ];
     var volumes = {"volumes": [{"volume": 16, "authors": [{"name": "weilin cai"}, {"name": "zack"}]}, {"volume": 10, "authors": [{"name": "jerry"}, {"name": "wei"}]}, {"volume": 15, "authors": [{"name": "zack"}, {"name": "wei"}, {"name": "weilin cai"}, {"name": "jerry"}]}]};
 
+    var path = [{name: "wei"}, {name: "jerry"}, {name: "zack"}];
+
+    // showPath();
     // showTopKPapers(papers);
     // showRelatedPapers(papers);
     // showVolumeContrib("IEEE XXX", volumes.volumes);

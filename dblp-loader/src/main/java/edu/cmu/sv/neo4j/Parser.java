@@ -11,6 +11,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class Parser {
+	/* Number of records to be loaded */
+	public static int MAX_RECORDS = Integer.MAX_VALUE;
+
     private Map<String, Paper> allPublications;
     private Paper paper;
     private String content = null;
@@ -28,7 +31,7 @@ public class Parser {
     class SAXHandler extends DefaultHandler {
 		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes) {
-			if (numRecords < Integer.MAX_VALUE) {
+			if (numRecords < MAX_RECORDS) {
 				switch (qName) {
 				case "article":
 				case "inproceedings":
