@@ -1,5 +1,5 @@
 package edu.cmu.sv.neo4j;
-import java.util.ArrayList;
+import java.util.*;
 
 
 public class Paper {
@@ -10,12 +10,12 @@ public class Paper {
     public String journal;
     public String volume;
     public Integer year;
-    public ArrayList<String> authors;
-    public ArrayList<String> citations;
+    public Set<String> authors;
+    public Set<String> citations;
     
     public Paper(){
-        authors = new ArrayList<>();
-        citations = new ArrayList<>();
+        authors = new HashSet<>();
+        citations = new HashSet<>();
     }
 
     @Override

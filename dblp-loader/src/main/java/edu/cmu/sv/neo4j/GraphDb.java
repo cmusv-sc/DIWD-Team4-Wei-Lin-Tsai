@@ -9,12 +9,18 @@ import org.neo4j.unsafe.batchinsert.BatchInserters;
 
 public class GraphDb {
 	public static final String DB_PATH = "target/neo4j-dblp";
+
+	/* Properties names */
 	public static final String KEY = "key";
 	public static final String AUTHOR = "name";
 	public static final String TITLE = "title";
     public static final String JOURNAL = "journal";
     public static final String YEAR = "year";
     public static final String VOLUME = "volume";
+
+    /* Relationships */
+    public static final String AUTHOR_RELATIONSHIP = "AUTHORED";
+    public static final String CITATION_RELATIONSHIP = "CITED";
 
 	public static BatchInserter batchInserter;
 	public static GraphDatabaseService graphDb;

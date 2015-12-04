@@ -27,15 +27,24 @@ public class Loader {
     	Set<String> allRelationships = new HashSet<>();
 
 		for (Paper paper: allPublications.values()) {
+			// Create AUTHORED relationship
 			for (String author: paper.authors) {
 				long authorNodeId = allAuthors.get(author);
 				if (!allRelationships.contains(paper.id + "->" + authorNodeId)) {
 					allRelationships.add(paper.id + "->" + authorNodeId);
-					GraphDb.createRelationship(paper.id, authorNodeId, "AUTHORED");
+					GraphDb.createRelationship(paper.id, authorNodeId, GraphDb.AUTHOR_RELATIONSHIP);
 				}
 				if (!allRelationships.contains(authorNodeId + "->" + paper.id)) {
 					allRelationships.add(authorNodeId + "->" + paper.id);
-					GraphDb.createRelationship(authorNodeId, paper.id, "AUTHORED");
+					GraphDb.createRelationship(authorNodeId, paper.id, GraphDb.AUTHOR_RELATIONSHIP);
+				}
+			}
+
+			// Create CITED relationship
+			for (String key: paper.citations) {
+				if (allPublications.containsKey(key)) {
+					Paper citation = allPublications.get(key);
+					GraphDb.createRelationship(paper.id, citation.id, GraphDb.CITATION_RELATIONSHIP);
 				}
 			}
 		}
