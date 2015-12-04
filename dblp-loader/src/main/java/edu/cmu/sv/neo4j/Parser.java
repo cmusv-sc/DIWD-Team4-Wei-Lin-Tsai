@@ -12,7 +12,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class Parser {
 	/* Number of records to be loaded */
-	public static int MAX_RECORDS = Integer.MAX_VALUE;
+	public static int MAX_RECORDS = 20000;
 
     private Map<String, Paper> allPublications;
     private Paper paper;
