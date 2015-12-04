@@ -71,6 +71,8 @@ requirement:
 
   python manage.py createsuperuser
 
+  echo "{}" > member.json
+
 - Run server
 
   cd mysite
