@@ -206,25 +206,40 @@ $(document).ready(function () {
          coauthor(graph);
      };
 
-    function showExperts(journal, volumes) {
+    function showExperts(experts) {
         console.log("test test");
+        var html = "<div id='related-experts'>";
+        experts.forEach(function (expert) {
+           html += "<div class='one-expert'>";
+           html += "<div class='expert-name'>" +
+                      "<span class='prefix'>[Name]</span> &nbsp" +
+                      "<span class='content'>" + expert.name + "</span>" +
+                    "</div>";
+
+           html += "</div>";
+        });
+        html += "</div>";
+        console.log(html);
+        $("#result-showcase").append(html);
         
     };
 
-    function showRecent() {
+    function showRecentSearch() {
         var recent_arr = [];
         if (Cookies.get('recent')) {
                 recent_arr = Cookies.getJSON('recent');
             }
         $(".recent-search").children().next().remove();
             for (var i = 0; i<recent_arr.length; i++) {
-                $(".recent-search").append('<li>'+JSON.stringify(recent_arr[i])+'</li>')
+                var type = JSON.parse(JSON.stringify(recent_arr[i]))['type']
+                var query = JSON.parse(JSON.stringify(recent_arr[i]))['query']
+                $(".recent-search").append('<li>'+ type + ':\t' + query +'</li>')
             }
             $(".lines").css("height", $(".recent-search").height());
     };
     
     $(document).ready(function() {
-        showRecent();
+        showRecentSearch();
     });
 
     $("#search-btn").click(function () {
@@ -244,7 +259,7 @@ $(document).ready(function () {
         recent_arr.push({type:type, query:content});
         Cookies.set('recent', recent_arr);
 
-        showRecent();
+        showRecentSearch();
 
         if (type == 'coauthor') {
             $.ajax({

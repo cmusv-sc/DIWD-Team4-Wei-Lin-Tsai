@@ -43,22 +43,22 @@ line.papers {
     stroke-width: 2px;
 }
 
-#related-papers {
+#related-papers, #related-experts {
     text-align: left;
 }
 
-.one-paper {
+.one-paper, .one-expert {
     margin-bottom: 10px;
     margin-left: 20%;
 }
 
-.one-paper .title {
+.one-paper .title, .one-expert .expert-name {
     color: #1A0DAB;
     margin: 0px 0px 4px;
     font-size: 17px;
 }
 
-.one-paper .title span.prefix {
+.one-paper .title span.prefix , .one-expert .expert-name span.prefix {
     font-size: 10px;
 }
 
@@ -79,7 +79,7 @@ line.papers {
 .recent-search li {
   list-style: none;
   border-bottom: 1px dotted #ccc;
-  text-indent: 25px;
+  text-indent: 10px;
   height: auto;
   padding: 10px;
   text-transform: capitalize;
