@@ -189,25 +189,27 @@ $(document).ready(function () {
     };
 
     function showVolumeContrib(journal, volumes) {
-        console.log("hi jerry");
+        console.log("haa");
+         function constructGraphFromVolumes(volumes) {
+             var graph = {
+                 name: journal
+             };
+             graph.children = volumes.map(function (volume) {
+                 return {
+                     name: "volume " + volume.volume,
+                     children: volume.authors
+                 };
+             });
+             return graph;
+         };
+         var graph = constructGraphFromVolumes(volumes);
+         coauthor(graph);
+     };
     };
 
     function showExperts(journal, volumes) {
-        console.log("hqq");
-        function constructGraphFromVolumes(volumes) {
-            var graph = {
-                name: journal
-            };
-            graph.children = volumes.map(function (volume) {
-                return {
-                    name: "volume " + volume.volume,
-                    children: volume.authors
-                };
-            });
-            return graph;
-        };
-        var graph = constructGraphFromVolumes(volumes);
-        coauthor(graph);
+        console.log("test test");
+        
     };
 
     function showRecent() {
@@ -222,7 +224,7 @@ $(document).ready(function () {
             $(".lines").css("height", $(".recent-search").height());
     };
     
-    $( document ).ready(function() {
+    $(document).ready(function() {
         showRecent();
     });
 
@@ -242,6 +244,7 @@ $(document).ready(function () {
         }
         recent_arr.push({type:type, query:content});
         Cookies.set('recent', recent_arr);
+
         showRecent();
 
         if (type == 'coauthor') {
@@ -299,7 +302,7 @@ $(document).ready(function () {
         } else if (type == 'search-expert') {
             console.log(content);
             $.ajax({
-                url:'/dblp/expert/' + content + '/10'
+                url:'/dblp/experts/' + content + '/10'
             }).done(function (ret) {
                 showExperts(ret.experts);
             }).fail(function () {
