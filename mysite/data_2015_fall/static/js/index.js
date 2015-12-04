@@ -189,7 +189,11 @@ $(document).ready(function () {
     };
 
     function showVolumeContrib(journal, volumes) {
-        console.log("haa");
+        console.log("hi jerry");
+    };
+
+    function showExperts(journal, volumes) {
+        console.log("hqq");
         function constructGraphFromVolumes(volumes) {
             var graph = {
                 name: journal
@@ -206,10 +210,40 @@ $(document).ready(function () {
         coauthor(graph);
     };
 
+    function showRecent() {
+        var recent_arr = [];
+        if (Cookies.get('recent')) {
+                recent_arr = Cookies.getJSON('recent');
+            }
+        $(".recent-search").children().next().remove();
+            for (var i = 0; i<recent_arr.length; i++) {
+                $(".recent-search").append('<li>'+JSON.stringify(recent_arr[i])+'</li>')
+            }
+            $(".lines").css("height", $(".recent-search").height());
+    };
+    
+    $( document ).ready(function() {
+        showRecent();
+    });
+
     $("#search-btn").click(function () {
         $("#result-showcase").empty();
         var type = $("#search_concept").text();
         var content = $("#search-content").val();
+        
+        // store most five recent search query
+        var recent_arr = [];
+        if (Cookies.get('recent')) {
+            recent_arr = Cookies.getJSON('recent');
+        }
+        if (recent_arr.length == 5) {
+            //remove from head
+            recent_arr.splice(0,1);
+        }
+        recent_arr.push({type:type, query:content});
+        Cookies.set('recent', recent_arr);
+        showRecent();
+
         if (type == 'coauthor') {
             $.ajax({
                 url:'/dblp/coauthors/' + content
@@ -248,6 +282,15 @@ $(document).ready(function () {
                 url:'/dblp/contributions/' + content
             }).done(function (ret) {
                 showVolumeContrib(content, ret.volumes);
+            }).fail(function () {
+
+            });
+        } else if (type == 'search-expert') {
+            console.log(content);
+            $.ajax({
+                url:'/dblp/expert/' + content + '/10'
+            }).done(function (ret) {
+                showExperts(ret.experts);
             }).fail(function () {
 
             });
