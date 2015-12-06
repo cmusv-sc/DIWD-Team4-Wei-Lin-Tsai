@@ -22,6 +22,7 @@ public class Loader {
     }
 
     public void createRelationships() {
+    	Set<String> isCoauthor = new HashSet<>();;
 		for (Map.Entry<String, Paper> entry: allPublications.entrySet()) {
 			Paper paper = entry.getValue();
 			// Create AUTHORED relationship
@@ -29,6 +30,22 @@ public class Loader {
 				long authorNodeId = allAuthors.get(author);
 				GraphDb.createRelationship(paper.id, authorNodeId, GraphDb.AUTHOR_RELATIONSHIP);
 				GraphDb.createRelationship(authorNodeId, paper.id, GraphDb.AUTHOR_RELATIONSHIP);
+			}
+
+			// Create COAUTHORED relationship
+			for (String author1: paper.authors) {
+				for (String author2: paper.authors) {
+					long id1 = allAuthors.get(author1);
+					long id2 = allAuthors.get(author2);
+					if (id1 == id2 || isCoauthor.contains(id1+"->"+id2) || isCoauthor.contains(id2+"->"+id1)) {
+						continue;
+					} else {
+						isCoauthor.add(id1+"->"+id2);
+						isCoauthor.add(id2+"->"+id1);
+						GraphDb.createRelationship(id1, id2, GraphDb.COAUTHOR_RELATIONSHIP);
+						GraphDb.createRelationship(id2, id1, GraphDb.COAUTHOR_RELATIONSHIP);
+					}
+				}
 			}
 
 			// Create CITED relationship

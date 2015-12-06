@@ -20,6 +20,7 @@ public class GraphDb {
 
     /* Relationships */
     public static final String AUTHOR_RELATIONSHIP = "AUTHORED";
+    public static final String COAUTHOR_RELATIONSHIP = "COAUTHORED";
     public static final String CITATION_RELATIONSHIP = "CITED";
 
 	public static BatchInserter batchInserter;
