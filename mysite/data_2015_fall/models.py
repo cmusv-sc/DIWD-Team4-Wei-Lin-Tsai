@@ -10,6 +10,14 @@ class Article(StructuredNode):
     volume = StringProperty()
     authors = RelationshipFrom('Author', 'AUTHORED')
 
+    def toDict(self):
+        return {
+            "title": self.title,
+            "authors": [a.toDict() for a in self.authors],
+            "journal": self.journal,
+            "year": self.year,
+            "volume": self.volume
+        }
 class Author(StructuredNode):
     name = StringProperty()
     articles = RelationshipTo('Article', 'AUTHORED')
