@@ -42,7 +42,9 @@ requirement:
 
 - Configure max heap size in maven
 
-  echo "export MAVEN_OPTS=\"-Xmx6G\"" > ~/.mavenrc
+  echo "export MAVEN_OPTS=\"-Xmx6G\"" > ~/.mavenrc  (if you are using bash)
+
+  echo export MAVEN_OPTS=\"-Xmx6G\" > ~/.mavenrc  (if you are using csh)
 
 - Run DBLP parser (This will take about 5~10 minutes)
   
