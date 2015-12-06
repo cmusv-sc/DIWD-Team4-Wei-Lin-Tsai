@@ -10,4 +10,4 @@ def get_top_k_cited_papers(request, name, year, k):
             "order by count desc " \
             "limit %s" % (name, year, k)
     results, meta = db.cypher_query(query)
-    return JsonResponse({"paper": [p.toDict() for p in [Article.inflate(row[0]) for row in results]] })
+    return JsonResponse({"papers": [p.toDict() for p in [Article.inflate(row[0]) for row in results]] })
