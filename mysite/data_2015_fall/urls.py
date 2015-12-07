@@ -11,5 +11,6 @@ urlpatterns = [
     url(r'^path/(?P<start>.+)/(?P<end>.+)$', findPath),
     url(r'^experts/(?P<keywords>.+)/(?P<k>\d+)$', getTopKExpertsByKeywords),
     url(r'^collaborators/(?P<name>.+)/(?P<keywords>.+)/(?P<k>\d+)$', queryCollaboratorsByNameAndKeyWords),
-    url(r'^cited/(?P<name>.+)/(?P<year>\d+)/(?P<k>\d+)$', get_top_k_cited_papers)
+    url(r'^cited/(?P<name>.+)/(?P<year>\d+)/(?P<k>\d+)$', get_top_k_cited_papers),
+    url(r'^cited/(?P<name>.+)$', get_citations)
 ]
