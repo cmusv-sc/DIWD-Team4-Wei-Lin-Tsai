@@ -72,6 +72,7 @@ public class Loader {
 
 		Loader loader = new Loader();
 		GraphDb.open();
+		GraphDb.createIndex();
 		try {
 			System.out.println("Inserting nodes into Neo4j....");
 			loader.createNodes();

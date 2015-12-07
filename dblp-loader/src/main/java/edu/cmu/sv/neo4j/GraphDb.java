@@ -59,6 +59,11 @@ public class GraphDb {
 		batchInserter.createRelationship(id1, id2, relationship, null);
 	}
 
+	public static void createIndex() {
+		Label label = DynamicLabel.label("Article");
+		batchInserter.createDeferredSchemaIndex(label).on(YEAR).create();
+	}
+
 	@SuppressWarnings("deprecation")
 	public static void open() {
 		batchInserter = BatchInserters.inserter(new File(DB_PATH).getAbsolutePath());
