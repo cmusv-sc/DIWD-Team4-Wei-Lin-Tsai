@@ -554,7 +554,16 @@ $(document).ready(function () {
             }).done(function (ret) {
                 showExperts(ret.collaborators);
             }).fail(function () {
-
+            });
+        } else if (type == 'top-cited-papers') {
+            var journal_name = content.substring(0, content.indexOf('+'))
+            var year = content.replace(journal_name+'+', '')
+            console.log(name, keywords);
+            $.ajax({
+                url:'/dblp/cited/' + journal_name + '/' + year + '/10'
+            }).done(function (ret) {
+                showRelatedPapers(ret.papers);
+            }).fail(function () {
             });
         }
     });
