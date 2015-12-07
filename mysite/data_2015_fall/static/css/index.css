@@ -95,9 +95,22 @@ line.papers {
 }
 
 .lines {
-  border-left: 1px solid #ffaa9f;
-  border-right: 1px solid #ffaa9f;
-  width: 2px;
-  float: left;
-  margin-left: 40px;
-}​
+    border-left: 1px solid #ffaa9f;
+    border-right: 1px solid #ffaa9f;
+    width: 2px;
+    float: left;
+    margin-left: 40px;
+}
+
+.sequence .axis path, .sequence .axis line {
+     fill: none;
+     stroke:#b6b6b6;
+     shape-rendering: crispEdges;
+}
+.sequence .tick text{fill:#999;}
+g.journal.active{cursor:pointer;}
+.sequence text.label{font-size:12px;font-weight:bold;cursor:pointer;}
+.sequence text.value{font-size:12px;font-weight:bold;}
+.sequence {
+    font-family: Arial, sans-serif;font-size:10px;
+}

@@ -10,7 +10,7 @@ import sys
 from django.utils.safestring import SafeString
 from django.http import JsonResponse
 from data_2015_fall.models import *
-from neomodel import DoesNotExist
+from neomodel import DoesNotExist, db
 from api.queryByKeywords import *
 from api.queryByJournal import *
 from api.queryExperts import *
@@ -337,3 +337,33 @@ def findCoAuthorsMultiLevel(request, level, name):
     except DoesNotExist as e:
         return JsonResponse({'error': "Can't find Author: " + name})
     return JsonResponse({'coauthors': root.toDict()})
+
+def queryPublicationsBetweenYears_(startYear, endYear):
+    query = "match (n:Article) where n.year >= %s and n.year <= %s return n order by n.year" % (startYear, endYear)
+    results, meta = db.cypher_query(query)
+    journals = {}
+    for row in results:
+        article = Article.inflate(row[0])
+        name = article.journal
+        year = article.year
+        if not journals.has_key(name):
+            journals[article.journal] = {}
+        journalDist = journals[article.journal]
+        if journalDist.has_key(article.year):
+            journalDist[year] += 1
+        else:
+            journalDist[year] = 1
+
+    pubYearDist = []
+    for name, journalDist in journals.iteritems():
+        pubYearDist.append({
+            "name":name,
+            "articles": [[year,count] for year, count in journalDist.iteritems()],
+            "total": sum(count for count in journalDist.itervalues())
+        })
+    return pubYearDist
+
+def queryPublicationsBetweenYears(request, startYear, endYear):
+    return JsonResponse({
+        "distribution": queryPublicationsBetweenYears_(startYear, endYear)
+    })
