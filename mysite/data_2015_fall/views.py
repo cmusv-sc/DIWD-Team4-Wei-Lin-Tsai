@@ -289,7 +289,10 @@ def findCoAuthors(request, name):
         'coauthors':root.toDict()
     })
 
-def findCoAuthors_(name, visited):
+def findCoAuthors1_(name, visited):
+    """
+    find co authors by the papers
+    """
     author = Author.nodes.get(name=name)
     coauthors = set()
     for article in author.articles.all():
@@ -297,6 +300,13 @@ def findCoAuthors_(name, visited):
             if coauthor.name not in visited and coauthor.name != name:
                 coauthors.add(coauthor.name)
     return coauthors
+
+def findCoAuthors_(name, visited):
+    """
+    find co authors by the coauthor relationship
+    """
+    author = Author.nodes.get(name=name)
+    return set(a_author.name for a_author in author.coauthors).difference(visited).difference(set([name]))
 
 def findCoAuthorsMultiLevel_(depth, name):
     root = Author.nodes.get(name=name)

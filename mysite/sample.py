@@ -40,6 +40,6 @@ def mockData():
 # print findCoAuthorsMultiLevel_(1, "wei").toDict()
 # print findCoAuthorsMultiLevel_(2, "wei").toDict()
 
-# print findCoAuthors_("jerry", {})
-print findPathBIBFS("wei", "jerry")
-print findPathBIBFS("wei", "weilin cai")
+# print findCoAuthors_("Jozef Gruska", {})
+print findPathBIBFS("Daowen Qiu", "Simant Dube")
+# print findPathBIBFS("wei", "weilin cai")
