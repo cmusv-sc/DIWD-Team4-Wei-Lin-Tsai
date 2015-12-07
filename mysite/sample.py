@@ -46,4 +46,5 @@ def mockData():
 # print findPathBIBFS("wei", "weilin cai")
 
 
-print queryPublicationsBetweenYears_(1990, 2010)
+# print queryPublicationsBetweenYears_(1990, 2010)
+print queryPubsOfAuthorOverTime_("Jozef Gruska")

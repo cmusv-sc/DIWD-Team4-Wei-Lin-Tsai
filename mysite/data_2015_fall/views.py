@@ -367,3 +367,28 @@ def queryPublicationsBetweenYears(request, startYear, endYear):
     return JsonResponse({
         "distribution": queryPublicationsBetweenYears_(startYear, endYear)
     })
+
+
+
+def queryPubsOfAuthorOverTime_(name):
+    query = "match (n1)-[:AUTHORED]->(n2) where n1.name='%s' return n2" % name
+    results, meta = db.cypher_query(query)
+    countPerYear = {}
+
+    for row in results:
+        article = Article.inflate(row[0])
+        name = article.journal
+        year = article.year
+        if countPerYear.has_key(year):
+            countPerYear[year]+=1
+        else:
+            countPerYear[year]=1
+
+    freq = [{"name": year, "frequency": count} for year, count in countPerYear.iteritems()]
+    return freq
+
+
+def queryPubsOfAuthorOverTime(request, name):
+    return JsonResponse({
+        "distribution": queryPubsOfAuthorOverTime_(name)
+    })

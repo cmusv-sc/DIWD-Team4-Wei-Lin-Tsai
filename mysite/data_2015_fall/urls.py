@@ -15,5 +15,6 @@ urlpatterns = [
     url(r'^citations/(?P<name>.+)$', get_citations),
     url(r'^paper/(?P<name>.+)$', get_authors),
     url(r'^author/(?P<name>.+)$', get_papers),
-    url(r'^journalsdist/(?P<startYear>\d+)/(?P<endYear>\d+)', queryPublicationsBetweenYears)
+    url(r'^journalsdist/(?P<startYear>\d+)/(?P<endYear>\d+)', queryPublicationsBetweenYears),
+    url(r'^pubovertime/(?P<name>.+)', queryPubsOfAuthorOverTime),
 ]

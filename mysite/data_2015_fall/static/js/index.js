@@ -558,11 +558,224 @@ $(document).ready(function () {
         }
     };
 
+    function showAuthorPubOverTime1() {
+        var data = [
+            {A: "AL", B: 2, C: 4, D: 5},
+            {A: "BL", B: 3, C: 6, D: 2},
+            {A: "CL", B: 9, C: 1, D: 15},
+            {A: "DL", B: 20, C: 12, D: 13},
+            {A: "DL", B: 20, C: 12, D: 13},
+            {A: "DL", B: 20, C: 12, D: 13},
+            {A: "DL", B: 20, C: 12, D: 13},
+            {A: "DL", B: 20, C: 12, D: 13},
+            {A: "DL", B: 20, C: 12, D: 13},
+            {A: "DL", B: 20, C: 12, D: 13}
+        ];
+        var margin = {top: 20, right: 20, bottom: 30, left: 40},
+            width = 960 - margin.left - margin.right,
+            height = 500 - margin.top - margin.bottom;
+
+        var x = d3.scale.ordinal()
+            .rangeRoundBands([0, width], .1);
+
+        var y = d3.scale.linear()
+            .rangeRound([height, 0]);
+
+        var color = d3.scale.ordinal()
+            .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+
+        var xAxis = d3.svg.axis()
+            .scale(x)
+            .orient("bottom");
+
+        var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left")
+            .tickFormat(d3.format(".2s"));
+
+        var svg = d3.select("#result-showcase").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        // update(data);
+        d3.csv("/static/test.csv", function (err, data) {
+            console.log(data);
+            color.domain(d3.keys(data[0]).filter(function(key) { return key !== "State"; }));
+
+            data.forEach(function(d) {
+                var y0 = 0;
+                d.ages = color.domain().map(function(name) { return {name: name, y0: y0, y1: y0 += +d[name]}; });
+                d.total = d.ages[d.ages.length - 1].y1;
+            });
+
+            data.sort(function(a, b) { return b.total - a.total; });
+
+            x.domain(data.map(function(d) { return d.State; }));
+            y.domain([0, d3.max(data, function(d) { return d.total; })]);
+
+            svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis);
+
+            svg.append("g")
+                .attr("class", "y axis")
+                .call(yAxis)
+                .append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 6)
+                .attr("dy", ".71em")
+                .style("text-anchor", "end")
+                .text("Population");
+
+            var state = svg.selectAll(".state")
+                .data(data)
+                .enter().append("g")
+                .attr("class", "g")
+                .attr("transform", function(d) { return "translate(" + x(d.State) + ",0)"; });
+
+            state.selectAll("rect")
+                .data(function(d) { return d.ages; })
+                .enter().append("rect")
+                .attr("width", x.rangeBand())
+                .attr("y", function(d) { return y(d.y1); })
+                .attr("height", function(d) { return y(d.y0) - y(d.y1); })
+                .style("fill", function(d) { return color(d.name); });
+
+            var legend = svg.selectAll(".legend")
+                .data(color.domain().slice().reverse())
+                .enter().append("g")
+                .attr("class", "legend")
+                .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+            legend.append("rect")
+                .attr("x", width - 18)
+                .attr("width", 18)
+                .attr("height", 18)
+                .style("fill", color);
+
+            legend.append("text")
+                .attr("x", width - 24)
+                .attr("y", 9)
+                .attr("dy", ".35em")
+                .style("text-anchor", "end")
+                .text(function(d) { return d; });
+
+        });
+    };
+
+    function showAuthorPubOverTime(data) {
+        console.log(data);
+        var margin = {top: 20, right: 20, bottom: 30, left: 40},
+            width = 600 - margin.left - margin.right,
+            height = 300 - margin.top - margin.bottom;
+
+        var formatPercent = d3.format(".0%");
+
+        var x = d3.scale.ordinal()
+            .rangeRoundBands([0, width], .1, 1);
+
+        var y = d3.scale.linear()
+            .range([height, 0]);
+
+        var xAxis = d3.svg.axis()
+            .scale(x)
+            .orient("bottom");
+
+        var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left")
+            .tickValues(data.map(function (d) { return d.frequency ;}))
+            .tickFormat(d3.format(",.0f"));
+
+        var svg = d3.select("#result-showcase").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+            .attr("class", "barchart");
+
+        update(data);
+        function update(data) {
+            /*
+            data.forEach(function(d) {
+                d.frequency = +d.frequency;
+            });
+            */
+
+            var total = data.reduce(function (sum, v) {
+                return sum + v.frequency;
+            }, 0);
+
+            x.domain(data.map(function(d) { return d.name; }));
+            y.domain([0, total]);
+
+            svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis);
+
+            svg.append("g")
+                .attr("class", "y axis")
+                .call(yAxis)
+                .append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 6)
+                .attr("dy", ".71em")
+                .style("text-anchor", "end")
+                .text("Papers/Year");
+
+
+            svg.selectAll(".bar")
+                .data(data)
+                .enter().append("rect")
+                .attr("class", "bar")
+                .attr("x", function(d) { return x(d.name); })
+                .attr("width", x.rangeBand())
+                .attr("y", function(d) { return y(d.frequency); })
+                .attr("height", function(d) { return height - y(d.frequency); });
+
+            // d3.select("input").on("change", change);
+
+            var sortTimeout = setTimeout(function() {
+                d3.select("input").property("checked", true).each(change);
+            }, 2000);
+
+            function change() {
+                clearTimeout(sortTimeout);
+
+                // Copy-on-write since tweens are evaluated after a delay.
+                var x0 = x.domain(data.sort(this.checked
+                    ? function(a, b) { return b.frequency - a.frequency; }
+                    : function(a, b) { return d3.ascending(a.name, b.name); })
+                    .map(function(d) { return d.name; }))
+                    .copy();
+
+                svg.selectAll(".bar")
+                    .sort(function(a, b) { return x0(a.name) - x0(b.name); });
+
+                var transition = svg.transition().duration(750),
+                    delay = function(d, i) { return i * 50; };
+
+                transition.selectAll(".bar")
+                    .delay(delay)
+                    .attr("x", function(d) { return x0(d.name); });
+
+                transition.select(".x.axis")
+                    .call(xAxis)
+                    .selectAll("g")
+                    .delay(delay);
+            }
+        };
+    }
+
     $("#search-btn").click(function () {
         $("#result-showcase").empty();
         var type = $("#search_concept").text();
         var content = $("#search-content").val();
-        
+
         // store most five recent search query
         var recent_arr = [];
         if (Cookies.get('recent')) {
@@ -676,7 +889,15 @@ $(document).ready(function () {
             $.ajax({
                 url:'/dblp/journalsdist/' + years[0] + '/' + years[1]
             }).done(function (ret) {
-                showSequence(years[0], years[1], ret.distribution)
+                showSequence(years[0], years[1], ret.distribution);
+            }).fail(function () {
+
+            });
+        } else if (type == 'pub-authors-overtime') {
+            $.ajax({
+               url:'/dblp/pubovertime/' + content
+            }).done(function (ret) {
+                showAuthorPubOverTime(ret.distribution);
             }).fail(function () {
 
             });
@@ -701,6 +922,7 @@ $(document).ready(function () {
     // showTopKPapers(papers);
     // showRelatedPapers(papers);
     // showVolumeContrib("IEEE XXX", volumes.volumes);
+    //showAuthorPubOverTime();
     // var treeData = [
     // {"name": "Udo Pletat", "children": [{"name": "Toni Bollinger", "children": [{"name": "Sven Lorenz", "children": []}]}, {"name": "Sven Lorenz", "children": [{"name": "Toni Bollinger", "children": []}]}]}
     // ];
