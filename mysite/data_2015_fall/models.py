@@ -1,5 +1,5 @@
 from neomodel import (StructuredNode, StringProperty, IntegerProperty, ArrayProperty,
-    RelationshipTo, RelationshipFrom)
+    RelationshipTo, RelationshipFrom, Relationship)
 
 # Create your models here.
 
@@ -9,6 +9,7 @@ class Article(StructuredNode):
     year = IntegerProperty()
     volume = StringProperty()
     authors = RelationshipFrom('Author', 'AUTHORED')
+    citations = Relationship('Article', 'CITED')
 
     def toDict(self):
         return {
@@ -21,6 +22,7 @@ class Article(StructuredNode):
 class Author(StructuredNode):
     name = StringProperty()
     articles = RelationshipTo('Article', 'AUTHORED')
+    coauthors = Relationship('Author', 'COAUTHORED')
     def __str__(self):
         # Call str function here since sometimes the object might not
         # found in the database...
