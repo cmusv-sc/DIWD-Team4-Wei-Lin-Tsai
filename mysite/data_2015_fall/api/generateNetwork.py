@@ -32,7 +32,7 @@ def get_citations_network(request, name):
 
 
 def get_authors(name):
-    query = "match (n1)<-[:AUTHORED]-(n2) where n1.title='%s' return n2" % name
+    query = "match (n1)<-[:AUTHORED]-(n2) where n1.title=\"%s\" return n2" % name
     results, meta = db.cypher_query(query)
     return [a.name for a in [Author.inflate(row[0]) for row in results]]
 
