@@ -32,20 +32,20 @@ def get_citations_network(request, name):
 
 
 def get_authors(name):
-    query = "match (n1)<-[:AUTHORED]-(n2) where n1.title=\"%s\" return n2" % name
-    results, meta = db.cypher_query(query)
+    query = "match (n1)<-[:AUTHORED]-(n2) where n1.title={name} return n2"
+    results, meta = db.cypher_query(query, {"name": name})
     return [a.name for a in [Author.inflate(row[0]) for row in results]]
 
 
 def get_papers(name):
-    query = "match (n1)-[:AUTHORED]->(n2) where n1.name='%s' return n2" % name
-    results, meta = db.cypher_query(query)
+    query = "match (n1)-[:AUTHORED]->(n2) where n1.name={name} return n2"
+    results, meta = db.cypher_query(query, {"name": name})
     return [a.title for a in [Article.inflate(row[0]) for row in results]]
 
 
 def get_coauthors(request, name):
-    query = "match (n1)-[:COAUTHORED]->(n2) where n1.name='%s' return n2" % name
-    results, meta = db.cypher_query(query)
+    query = "match (n1)-[:COAUTHORED]->(n2) where n1.name={name} return n2"
+    results, meta = db.cypher_query(query, {"name": name})
     return JsonResponse({"authors": [a.toDict() for a in [Author.inflate(row[0]) for row in results]]})
 
 
