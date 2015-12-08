@@ -82,7 +82,6 @@ line.papers {
   text-indent: 10px;
   height: auto;
   padding: 10px;
-  text-transform: capitalize;
   text-align: left;
 }
 
@@ -94,13 +93,6 @@ line.papers {
   -o-transition:      all 0.2s;
 }
 
-.lines {
-    border-left: 1px solid #ffaa9f;
-    border-right: 1px solid #ffaa9f;
-    width: 2px;
-    float: left;
-    margin-left: 40px;
-}
 
 .sequence .axis path, .sequence .axis line {
      fill: none;

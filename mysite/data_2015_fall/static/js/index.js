@@ -218,6 +218,7 @@ $(document).ready(function () {
             });
             return graph;
         };
+
         var root = constructGraphFromVolumes(volumes);
         var margin = {top: 20, right: 120, bottom: 20, left: 120},
             width = 960 - margin.right - margin.left,
@@ -233,6 +234,7 @@ $(document).ready(function () {
             .projection(function(d) { return [d.y, d.x]; });
 
         var svg = d3.select("#result-showcase").append("svg")
+            .attr("id","result-svg")
             .attr("width", width + margin.right + margin.left)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
@@ -443,14 +445,17 @@ $(document).ready(function () {
                 recent_arr = Cookies.getJSON('recent');
             }
         $(".recent-search").children().next().remove();
+            $( "#clear-history" ).click(function() {
+                $(".recent-search #history").remove();
+                Cookies.remove('recent');
+            });
             for (var i = 0; i<recent_arr.length; i++) {
                 var type = JSON.parse(JSON.stringify(recent_arr[i]))['type']
                 var query = JSON.parse(JSON.stringify(recent_arr[i]))['query']
-                $(".recent-search").append('<li>'+ type + ':\t' + query +'</li>')
+                $(".recent-search").append('<li id="history">'+ type + ':\t' + query +'</li>')
             }
             $(".lines").css("height", $(".recent-search").height());
     };
-
     showRecentSearch();
 
 
@@ -667,7 +672,6 @@ $(document).ready(function () {
     };
 
     function showAuthorPubOverTime(data) {
-        console.log(data);
         var margin = {top: 20, right: 20, bottom: 30, left: 40},
             width = 600 - margin.left - margin.right,
             height = 300 - margin.top - margin.bottom;
@@ -771,6 +775,99 @@ $(document).ready(function () {
         };
     }
 
+    function showNetwork(data) {
+
+        // ************** Generate the tree diagram  *****************
+        var margin = {top: 0, right: 120, bottom: 20, left: 300},
+            width = 960 - margin.right - margin.left,
+            height = 600 - margin.top - margin.bottom;
+
+        var i = 0;
+
+        var tree = d3.layout.tree()
+            .size([height, width]);
+
+        var diagonal = d3.svg.diagonal()
+            .projection(function(d) { return [d.y, d.x]; });
+
+        var svg = d3.select("#result-showcase").append("svg")
+            .attr("width", width + margin.right + margin.left)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        root = data;
+
+        update(root);
+
+        function update(source) {
+
+        // Compute the new tree layout.
+        var nodes = tree.nodes(root).reverse(),
+            links = tree.links(nodes);
+
+        // Normalize for fixed-depth.
+        nodes.forEach(function(d) { d.y = d.depth * 180; });
+
+        // Declare the nodesâ€¦
+        var node = svg.selectAll("g.node")
+            .data(nodes, function(d) { return d.id || (d.id = ++i); });
+
+        // Enter the nodes.
+        var nodeEnter = node.enter().append("g")
+            .attr("class", "node")
+            .attr("transform", function(d) { 
+            return "translate(" + d.y + "," + d.x + ")"; })
+            .on('mouseover', function(d){
+                var g = d3.select(this); // The node
+                var nodename = $('')
+                // The class is used to remove the additional text later
+                var info = g.append('text')
+                 .classed('info', true)
+                 .attr('x', -50)
+                 .attr('y', 30)
+                 .style('font-weight', "bold")
+                 .text(function(d) { return d.name });
+            })
+            .on('mouseout', function(d){
+                d3.select(this).select('text.info').remove();
+            });
+
+        nodeEnter.append("circle")
+            .attr("r", 10)
+            .style("fill", "#fff");
+
+        nodeEnter.append("text")
+            .attr("x", function(d) { 
+            return d.children || d._children ? -13 : 13; })
+            .attr("dy", ".35em")
+            .attr("text-anchor", function(d) { 
+            return d.children || d._children ? "end" : "start"; })
+            .text(function(d) { return d.name })
+            .style("fill-opacity", 1)
+            .attr("class","truncate")
+            .attr("name",function(d) { return d.name });
+
+        // Declare the linksâ€¦
+        var link = svg.selectAll("path.link")
+            .data(links, function(d) { return d.target.id; });
+
+        // Enter the links.
+        link.enter().insert("path", "g")
+            .attr("class", "link")
+            .attr("d", diagonal);
+
+        }
+        $('.truncate').succinct({
+            size:30
+        });
+    }
+
+/*
+    =======================================================
+    search click functions:
+    =======================================================
+*/
     $("#search-btn").click(function () {
         $("#result-showcase").empty();
         var type = $("#search_concept").text();
@@ -794,6 +891,7 @@ $(document).ready(function () {
             $.ajax({
                 url:'/dblp/coauthors/' + content
             }).done(function (ret) {
+                console.log(ret);
                 coauthor(ret.coauthors);
             }).fail(function () {
             });
@@ -901,7 +999,33 @@ $(document).ready(function () {
             }).fail(function () {
 
             });
-        };
+        } 
+        else if (type == 'paper-paper') {
+            console.log("jjj");
+            $.ajax({
+                url:'/dblp/citations/' + content
+            }).done(function (ret) {
+                showNetwork(ret);
+            }).fail(function () {
+            });
+        } else if (type == 'author-author') {
+            $.ajax({
+                url:'/dblp/coauthors/3/' + content
+            }).done(function (ret) {
+                coauthor(ret.coauthors);
+            }).fail(function () {
+
+            });
+        } else if (type == 'paper-author') {
+            console.log(content);
+            $.ajax({
+                url:'/dblp/paper_author/' + content
+            }).done(function (ret) {
+                console.log(ret);
+                showNetwork(ret);
+            }).fail(function () {
+            });
+        }
     });
     var papers = [
         {
@@ -917,13 +1041,4 @@ $(document).ready(function () {
 
     var path = [{name: "wei"}, {name: "jerry"}, {name: "zack"}];
 
-    // showSequence();
-    // showPath();
-    // showTopKPapers(papers);
-    // showRelatedPapers(papers);
-    // showVolumeContrib("IEEE XXX", volumes.volumes);
-    //showAuthorPubOverTime();
-    // var treeData = [
-    // {"name": "Udo Pletat", "children": [{"name": "Toni Bollinger", "children": [{"name": "Sven Lorenz", "children": []}]}, {"name": "Sven Lorenz", "children": [{"name": "Toni Bollinger", "children": []}]}]}
-    // ];
 });
