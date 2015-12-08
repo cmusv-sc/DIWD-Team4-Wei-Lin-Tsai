@@ -11,7 +11,7 @@ class CitationNetworkResponse():
     def toDict(self):
         return {
             "title": self.title,
-            "citations": [c.toDict() for c in self.citations],
+            "children": [c.toDict() for c in self.citations],
         }
 
 
