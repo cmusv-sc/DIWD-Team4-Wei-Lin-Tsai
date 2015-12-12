@@ -17,6 +17,7 @@ from api.queryExperts import *
 from api.queryCollaborators import *
 from api.queryTopCited import *
 from api.generateNetwork import *
+from hashlib import sha512
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -104,6 +105,7 @@ def sign_up(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         passwd = request.POST.get('passwd')
+        passwd = sha512(passwd).hexdigest()
         temp_dict = {email:passwd}
         in_file = open('member.json')
         memberlist = simplejson.load(in_file)
@@ -130,6 +132,7 @@ def sign_in(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         passwd = request.POST.get('passwd')
+        passwd = sha512(passwd).hexdigest()
         in_file = open('member.json','r')
         memberlist = simplejson.load(in_file)
         if email in memberlist and passwd == memberlist[email]:
