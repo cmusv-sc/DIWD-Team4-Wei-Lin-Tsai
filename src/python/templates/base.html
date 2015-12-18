@@ -88,13 +88,16 @@
                                   <li><a href="#coauthor2">Search CoAuthor of CoAuthor</a></li>
                                   <li><a href="#papers">Search Papers Top 100</a></li>
                                   <li><a href="#papers-rel">Search Papers Interested In</a></li>
-                                  <li><a href="#volume-contrib">Get Contributors to Volumes of a Journal</a></li>
-                                  <li><a href="#smallworld">Search CoAuthor Path</a></li>
                                   <li><a href="#search-expert">Search Experts in Fields</a></li>
+                                  <li><a href="#volume-contrib">Get Contributors to Volumes of a Journal</a></li>
                                   <li><a href="#search-collaborators">Search Possible Collaborators in Fields</a></li>
-                                  <li><a href="#top-cited-papers">Find Top Cited Papers</a></li>
+                                  <li><a href="#smallworld">Search CoAuthor Path</a></li>
                                   <li><a href="#pub-journals-overtime">Publications in journals over time</a></li>
                                   <li><a href="#pub-authors-overtime">Publications of Author over time</a></li>
+                                  <li><a href="#top-cited-papers">Find Top Cited Papers of a Journal with given year</a></li>
+                                  <li><a href="#paper-paper">Find Citation of a Paper</a></li>
+                                  <li><a href="#author-author">Find Co-author of an Author</a></li>
+                                  <li><a href="#paper-author">Find Author's other paper of a given Paper</a></li>
                                 </ul>
                             </div>
                             <input type="hidden" name="search_param" value="1" id="search_param">
@@ -105,9 +108,10 @@
                             </span>
                             </div>
                         </div>
-                        <div class="lines"></div>
                         <div class="recent-search">
-                            <li> Recent Search:</li>
+                            <li style=""> Recent Search:
+                                <button id="clear-history" type="button" style="float:right">clear history</button>
+                            </li>
                         </div>
 
                     </div>
@@ -139,6 +143,7 @@
 
     <!-- jQuery -->
     <script src="{{STATIC_URL}}js/jquery.js"></script>
+    <script src="{{STATIC_URL}}js/jQuery.succinct.min.js"></script>
     <script src="{{STATIC_URL}}js/js.cookie.js"></script>
 
     <!-- Bootstrap Core JavaScript -->

@@ -19,6 +19,11 @@ class Article(StructuredNode):
             "year": self.year,
             "volume": self.volume
         }
+    def toDictTitleOnly(self):
+        return {
+            "title": self.title
+        }   
+
 class Author(StructuredNode):
     name = StringProperty()
     articles = RelationshipTo('Article', 'AUTHORED')
